@@ -3,7 +3,9 @@
 (a:define-constant +alphabet+ "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" :test 'string=)
 
 (defun write-integer-digits (integer stream &aux (integer (abs integer)))
-  (let* ((width (floor (1+ (log integer *print-base*))))
+  (let* ((width (if (zerop integer)
+                    1
+                    (floor (1+ (log integer *print-base*)))))
          (buffer (make-string width)))
     (loop :for x := integer :then (floor x *print-base*)
           :for i :from 0

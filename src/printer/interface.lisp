@@ -5,12 +5,14 @@
 
 (defvar *client* nil)
 (defvar *default-client* (make-instance 'standard-client))
+(defvar *current-depth* 0)
 
 (defgeneric print-object-using-client (client object stream))
 (defgeneric print-object (object stream)
   (:method ((object t) stream)
     (let ((*client* (or *client* *default-client*)))
-      (print-object-using-client *client* object stream))))
+      (print-object-using-client *client* object stream))
+    object))
 
 (defun write (object &key
                        (stream *standard-output*)

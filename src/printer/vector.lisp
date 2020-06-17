@@ -1,0 +1,18 @@
+(cl:in-package #:incless)
+
+(defmethod print-object-using-client ((client standard-client) (vec vector) stream)
+  (cond ((and (not *print-readably*) *print-level* (>= *current-depth* *print-level*))
+         (write-char #\# stream))
+        ((or *print-array* *print-readably*)
+         (write-string "#(" stream)
+         (let ((*current-depth* (1+ *current-depth*)))
+           (loop :with l := (1- (length vec))
+                 :for i :below l
+                 :do (print-object-using-client client (aref vec i) stream)
+                     (write-char #\Space stream)
+                 :finally (print-object-using-client client (aref vec l) stream)))
+         (write-string ")"))
+        (t (write-string "#<" stream)
+           (print-object-using-client client (type-of vec) stream)
+           (write-string ">" stream)))
+  vec)
