@@ -6,8 +6,7 @@
          (size (array-dimensions arr))
          (indx (make-list rank :initial-element 0)))
     (write-char #\# stream)
-    (let ((*print-base* 10))
-      (write-integer-digits rank stream))
+    (write-integer-digits rank 10 stream)
     (write-char #\A stream)
     (dotimes (i rank) (write-char #\( stream))
     (block nil
