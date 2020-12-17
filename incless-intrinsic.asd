@@ -30,5 +30,6 @@
                              (:file "vector")
                              (:file "array")
                              (:file "random-state")
+                             (:file "standard-object")
                              (:file "structure")
                              (:file "unreadable-stubs")))))
