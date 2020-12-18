@@ -11,8 +11,12 @@
 
 (defgeneric print-object (object stream)
   (:method ((object t) stream)
-    (let ((*client* (or *client* *default-client*)))
-      (print-object-using-client *client* object stream))
+    (let* ((*client* (or *client* *default-client*))
+           (overrides (parameter-override-list *client*))
+           (vars (mapcar (lambda (c) (car c)) overrides))
+           (values (mapcar (lambda (c) (cdr c)) overrides)))
+      (progv vars values
+        (print-object-using-client *client* object stream)))
     object))
 
 (defun write
