@@ -10,6 +10,7 @@
                 :pathname "src/interface/"
                 :serial t
                 :components ((:file "package-intrinsic")
+                             (:file "parameters")
                              ;; Uncomment this line when
                              ;; we have a condition system
                              ;; (:file "conditions")
