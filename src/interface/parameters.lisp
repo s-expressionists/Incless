@@ -2,7 +2,8 @@
 
 ;;; this is probably a bad solution
 
-(defgeneric parameter-override-list (client))
+(defgeneric parameter-override-list (client)
+  (:method-combination list))
 
-(defmethod parameter-override-list (client)
+(defmethod parameter-override-list list (client)
   nil)
