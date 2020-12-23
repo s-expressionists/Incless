@@ -13,10 +13,15 @@
   (:method ((object t) stream)
     (let* ((*client* (or *client* *default-client*))
            (overrides (parameter-override-list *client*))
-           (vars (mapcar (lambda (c) (car c)) overrides))
-           (values (mapcar (lambda (c) (cdr c)) overrides)))
-      (progv vars values
-        (print-object-using-client *client* object stream)))
+           (symbols nil)
+           (values nil))
+      (loop for x in overrides
+            do (loop for (sym . val) in x
+                     if (not (find sym symbols))
+                       do (push sym symbols)
+                          (push val values)))
+      (progv symbols values
+         (print-object-using-client *client* object stream)))
     object))
 
 (defun write

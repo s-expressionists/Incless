@@ -6,7 +6,7 @@
   (let ((package (symbol-package sym)))
     (cond ((null package)
            (write-string "#:" stream))
-          ((eq package (find-package "KEYWORD")) ; seems inefficient
+          ((eq package (load-time-value (find-package "KEYWORD")))
            (write-string ":" stream))
           ((not (eq package *package*))
            (write-string (package-name package) stream)
