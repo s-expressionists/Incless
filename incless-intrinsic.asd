@@ -10,9 +10,8 @@
                 :pathname "src/interface/"
                 :serial t
                 :components ((:file "package-intrinsic")
-                             ;; Uncomment this line when
-                             ;; we have a condition system
-                             ;; (:file "conditions")
+                             (:file "parameters")
+                             (:file "conditions")
                              (:file "interface")))
                (:module "printer"
                 :pathname "src/printer/"
