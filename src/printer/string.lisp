@@ -9,4 +9,4 @@
                          (write-char #\\ stream))
                        (write-char x stream))
              (write-char #\" stream))
-      (write-string obj stream)))
+      (write-string object stream)))
