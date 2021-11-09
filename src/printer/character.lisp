@@ -2,7 +2,7 @@
 
 (defmethod print-object-using-client ((client standard-client) (obj character) stream)
   (if (or *print-escape* *print-readably*)
-      (progn (write-string "#\\")
+      (progn (write-string "#\\" stream)
              (if (and (standard-char-p obj) (not (or (char= obj #\Space)
                                                      (char= obj #\Newline))))
                  (write-char obj stream)
