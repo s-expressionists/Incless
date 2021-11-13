@@ -2,8 +2,8 @@
 
 (defun unreadably (client obj stream)
   (write-string "#<" stream)
-  (print-object-using-client client (type-of obj) stream)
-  (write-char #\>))
+  (write-object client (type-of obj) stream)
+  (write-char #\> stream))
 
 ;;; FIXME figure out how to print an identity
 (defmacro print-unreadable-object

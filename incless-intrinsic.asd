@@ -18,6 +18,7 @@
                 :depends-on ("interface")
                 :serial t
                 :components ((:file "utilities")
+                             (:file "write-object")
                              (:file "integer")
                              (:file "rational")
                              (:file "float")

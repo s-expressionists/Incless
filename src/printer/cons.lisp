@@ -11,7 +11,7 @@
         (write-char #\( stream)
         (tagbody
          :2
-           (print-object-using-client client (car x) stream)
+           (write-object client (car x) stream)
            (incf current-length)
            (setf x (cdr x))
            (cond ((null x) (go :end))
@@ -23,6 +23,6 @@
                     (go :end)))
          :4
            (write-string " . " stream)
-           (print-object-using-client client x stream)
+           (write-object client x stream)
          :end)
-        (write-char #\)))))
+        (write-char #\) stream))))
