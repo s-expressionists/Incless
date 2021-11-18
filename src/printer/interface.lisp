@@ -5,9 +5,9 @@
 
 (defvar *client* nil)
 (defvar *default-client* (make-instance 'standard-client))
-(defvar *current-depth* 0)
 
 (defgeneric print-object-using-client (client object stream))
+
 (defgeneric print-object (object stream)
   (:method ((object t) stream)
     (let ((*client* (or *client* *default-client*)))
@@ -32,6 +32,7 @@
                        ((:readably *print-readably*) *print-readably*)
                        ((:right-margin *print-right-margin*) *print-right-margin*))
   (print-object object stream))
+
 (defun write-to-string (object &key
                                  ((:array *print-array*) *print-array*)
                                  ((:base *print-base*) *print-base*)
@@ -54,15 +55,18 @@
 (defun prin1 (object &optional (stream *standard-output*))
   (let ((*print-escape* t))
     (print-object object stream)))
+
 (defun princ (object &optional (stream *standard-output*))
   (let ((*print-escape* nil)
         (*print-readably* nil))
     (print-object object stream)))
+
 (defun print (object &optional (stream *standard-output*))
   (write-char #\Newline)
   (prin1 object stream)
   (write-char #\Space)
   object)
+
 (defun pprint (object &optional (stream *standard-output*))
   (write-char #\Newline)
   (let ((*print-pretty* t))
@@ -71,6 +75,7 @@
 (defun prin1-to-string (object)
   (with-output-to-string (stream)
     (prin1 object stream)))
+
 (defun princ-to-string (object)
   (with-output-to-string (stream)
     (princ object stream)))
