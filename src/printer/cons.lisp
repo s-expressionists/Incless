@@ -1,11 +1,10 @@
 (in-package #:incless)
 
 (defmethod print-object-using-client ((client standard-client) (cons cons) stream)
-  (if (and (not *print-readably*) *print-level* (>= *current-depth* *print-level*))
+  (if (and (not *print-readably*)
+           (eql 0 *print-level*))
       (write-char #\# stream)
-      (let ((*current-depth* (if *current-depth*
-                                 (1+ *current-depth*)
-                                 nil))
+      (let ((*print-level* (and *print-level* (max 0 (1- *print-level*))))
             (current-length 0)
             (x cons))
         (write-char #\( stream)
