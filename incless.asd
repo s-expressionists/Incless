@@ -32,4 +32,5 @@
                              (:file "random-state")
                              (:file "standard-object")
                              (:file "structure")
+                             (:file "symbol")
                              (:file "unreadable-stubs")))))
