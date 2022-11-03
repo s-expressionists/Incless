@@ -1,6 +1,6 @@
 # incless
 
-This is a project to do ... something.
+This project implements print-object methods for many standard classes.
 
 ## License
 
