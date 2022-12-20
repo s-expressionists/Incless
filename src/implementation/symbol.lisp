@@ -1,8 +1,9 @@
-(cl:in-package #:incless)
+(cl:in-package #:incless-implementation)
 
 ;;; placeholder implementation needed by other printers
 
-(defmethod print-object-using-client ((client standard-client) (sym symbol) stream)
+(defun print-symbol (client sym stream)
+  (declare (ignore client))
   (let ((package (symbol-package sym)))
     (cond ((null package)
            (write-string "#:" stream))

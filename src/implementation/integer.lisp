@@ -1,4 +1,4 @@
-(in-package #:incless)
+(in-package #:incless-implementation)
 
 (defparameter *digits* "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
@@ -81,7 +81,8 @@
   (when (minusp integer)
     (write-char #\- stream)))
 
-(defun print-integer (integer base stream)
+(defun print-integer (client integer base stream)
+  (declare (ignore client))
   ;; Determine whether a radix prefix should be printed, and if so,
   ;; which one.
   (when *print-radix*
@@ -96,7 +97,3 @@
   ;; Determine whether a trailing dot should be printed.
   (when (and *print-radix* (= *print-base* 10))
     (princ #\. stream)))
-
-(defmethod print-object-using-client ((client standard-client) (object integer) stream)
-  (print-integer object *print-base* stream)
-  object)

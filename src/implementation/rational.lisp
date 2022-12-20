@@ -1,6 +1,7 @@
-(in-package #:incless)
+(in-package #:incless-implementation)
 
-(defmethod print-object-using-client ((client standard-client) (obj ratio) stream)
+(defun print-rational (client obj stream)
+  (declare (ignore client))
   (when *print-radix*
     (write-radix *print-base* stream))
   (write-sign obj stream)

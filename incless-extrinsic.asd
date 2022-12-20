@@ -1,6 +1,6 @@
 ;;;; incless.asd
 
-(asdf:defsystem #:incless-intrinsic
+(asdf:defsystem #:incless-extrinsic
   :description "A portable, extensible Common Lisp printer."
   :author "Lonjil <lonjil@gmail.com>"
   :license  "BSD"
@@ -8,7 +8,7 @@
   :depends-on (#:incless
                #:incless-implementation)
   :components ((:module "src"
-                :pathname "src/intrinsic/"
+                :pathname "src/extrinsic/"
                 :serial t
                 :components ((:file "package")
                              (:file "interface")

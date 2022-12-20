@@ -1,7 +1,7 @@
-(in-package #:incless)
+(in-package #:incless-implementation)
 
-(defmethod print-object-using-client
-    ((client standard-client) (object string) stream)
+(defun print-string (client object stream)
+  (declare (ignore client))
   (if (or *print-escape* *print-readably*)
       (progn (write-char #\" stream)
              (loop :for x :across object

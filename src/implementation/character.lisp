@@ -1,6 +1,7 @@
-(in-package #:incless)
+(in-package #:incless-implementation)
 
-(defmethod print-object-using-client ((client standard-client) (obj character) stream)
+(defun print-character (client obj stream)
+  (declare (ignore client))
   (if (or *print-escape* *print-readably*)
       (progn (write-string "#\\" stream)
              (if (and (standard-char-p obj) (not (or (char= obj #\Space)

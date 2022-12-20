@@ -1,6 +1,6 @@
-(in-package #:incless)
+(in-package #:incless-implementation)
 
-(defmethod print-object-using-client ((client standard-client) (cons cons) stream)
+(defun print-cons (client cons stream)
   (if (and (not *print-readably*)
            (eql 0 *print-level*))
       (write-char #\# stream)
@@ -10,7 +10,7 @@
         (write-char #\( stream)
         (tagbody
          :2
-           (write-object client (car x) stream)
+           (incless:write-object client (car x) stream)
            (incf current-length)
            (setf x (cdr x))
            (cond ((null x) (go :end))
@@ -22,6 +22,6 @@
                     (go :end)))
          :4
            (write-string " . " stream)
-           (write-object client x stream)
+           (incless:write-object client x stream)
          :end)
         (write-char #\) stream))))

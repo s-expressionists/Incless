@@ -1,6 +1,6 @@
-(cl:in-package #:incless)
+(cl:in-package #:incless-implementation)
 
-(defmethod print-object-using-client ((client standard-client) (arr array) stream)
+(defun print-array (client arr stream)
   (let* ((rank (array-rank arr))
          (last-dim (1- rank))
          (size (array-dimensions arr))
@@ -25,5 +25,5 @@
                    (write-char #\( stream))))
         (loop :for i :below (array-total-size arr)
               :for elem := (row-major-aref arr i)
-              :do (write elem :stream stream)
+              :do (incless:write-object client elem stream)
                   (bump last-dim))))))
