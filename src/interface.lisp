@@ -24,9 +24,15 @@
                             #+sbcl (sb-kernel:get-lisp-obj-address object)
                             stream))))
 
-(defgeneric handle-circle (client object stream function))
+(defgeneric handle-circle (client object stream function)
+  (:method (client object stream function)
+    (declare (ignore client))
+    (funcall function object stream)))
 
-(defgeneric circle-check (client object))
+(defgeneric circle-check (client object)
+  (:method (client object)
+    (declare (ignore client object))
+    nil))
 
 (defgeneric class-slot-names (client class)
   (:method (client class)
