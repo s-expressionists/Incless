@@ -27,7 +27,25 @@
                  (funcall function object stream)))
              (funcall function object stream))
   #+(or clasp ecl) (sys::write-object-with-circle object stream function)
-  #-(or abcl clasp ecl) (funcall function object stream))
+  ;;; Poking around in CMUCL's internals wouldn't be needed if WITH-CIRCULARITY-DETECTION
+  ;;; called the body function in the first pass versus calling OUTPUT-OBJECT.
+  #+cmucl (cond ((not *print-circle*)
+                 (funcall function object stream))
+                (lisp::*circularity-hash-table*
+                 (let ((marker (kernel:check-for-circularity object t :logical-block)))
+                   (when (or (not marker)
+                             (kernel:handle-circularity marker stream))
+                     (funcall function object stream))))
+                (t
+                 (let ((lisp::*circularity-hash-table* (make-hash-table :test 'eq)))
+                   (funcall function object (make-broadcast-stream))
+                   (let ((lisp::*circularity-counter* 0))
+                     (let ((marker (kernel:check-for-circularity object t
+                                                                 :logical-block)))
+                       (when marker
+                         (kernel:handle-circularity marker stream)))
+                     (funcall function object stream)))))
+  #-(or abcl clasp cmucl ecl) (funcall function object stream))
 
 (defmethod incless:write-unreadable-object
     ((client native-client) object stream type identity function)
