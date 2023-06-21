@@ -43,4 +43,8 @@
                    (plusp (core::search-print-circle object))
                    (gethash object core::*circle-stack*)))
   #+cmucl (and (kernel:check-for-circularity object) t)
+  #+ecl (and *print-circle* object sys::*circle-counter*
+               (if (eq sys::*circle-counter* t)
+                   (plusp (sys::search-print-circle object))
+                   (gethash object sys::*circle-stack*)))
   #+sbcl (and (sb-impl::check-for-circularity object) t))
