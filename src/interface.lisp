@@ -64,3 +64,11 @@
     (mapcar (lambda (slot)
               (system::dsd-name slot))
             (mop:class-slots class))))
+
+(defgeneric printer-readtable (client)
+  (:method (client)
+    (declare (ignore client))
+    (if *print-readably*
+        #+sbcl sb-impl::*standard-readtable*
+        #-sbcl (with-standard-io-syntax *readtable*)
+        *readtable*)))

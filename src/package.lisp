@@ -5,6 +5,7 @@
            #:class-slot-names
            #:handle-circle
            #:print-object
+           #:printer-readtable
            #:write-identity
            #:write-object
            #:write-unreadable-object))
