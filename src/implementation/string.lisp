@@ -3,10 +3,10 @@
 (defun print-string (client object stream)
   (declare (ignore client))
   (if (or *print-escape* *print-readably*)
-      (progn (write-char #\" stream)
-             (loop :for x :across object
-                   :do (when (or (char= x #\") (char= x #\\))
-                         (write-char #\\ stream))
-                       (write-char x stream))
-             (write-char #\" stream))
+      (loop for x across object
+            initially (write-char #\" stream)
+            finally (write-char #\" stream)
+            when (or (char= x #\") (char= x #\\))
+              do (write-char #\\ stream)
+            do (write-char x stream))
       (write-string object stream)))
