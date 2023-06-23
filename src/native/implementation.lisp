@@ -51,7 +51,7 @@
     ((client native-client) object stream type identity function)
   (declare (ignore client))
   (print-unreadable-object (object stream :type type :identity identity)
-    (funcall function object stream)))
+    (funcall function)))
 
 (defmethod incless:circle-check ((client native-client) object)
   (declare (ignore client))

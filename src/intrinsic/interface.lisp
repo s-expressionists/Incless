@@ -82,9 +82,7 @@
 (defmacro print-unreadable-object
     ((object stream &key type identity) &body body)
   `(incless:write-unreadable-object *client* ,object ,stream ,type ,identity
-                                    (lambda (object stream)
-                                      (declare (ignore object stream))
-                                      ,@body)))
+                                    (lambda () ,@body)))
 
 (defmethod incless:handle-circle ((client intrinsic-client) object stream function)
   (incless-implementation:handle-circle client object stream function))
