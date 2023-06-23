@@ -98,8 +98,8 @@
                   (multiple-value-bind (found status)
                       (find-symbol name)
                     (unless (and status
-                                 (eq found symbol))
-                      (print-symbol-token client (package-name package))
+                                 (eq found sym))
+                      (print-symbol-token client (package-name package) stream)
                       (write-string (if (eq (nth-value 1 (find-symbol name package)) :external)
                                         ":"
                                         "::")
