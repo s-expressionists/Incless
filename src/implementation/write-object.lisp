@@ -55,7 +55,7 @@
        t))
 
 (defun write-unreadable-object
-    (client object stream type identity function)
+    (client object stream &optional type identity function)
   (cond (*print-readably*
          (error 'print-not-readable :object object))
         (t
