@@ -12,6 +12,7 @@
                              (:file "write-object")
                              (:file "integer")
                              (:file "rational")
+                             (:file "burger-dybvig")
                              (:file "float")
                              (:file "complex")
                              (:file "character")

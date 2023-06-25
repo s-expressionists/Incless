@@ -22,6 +22,9 @@
 (defmethod print-object ((object integer) stream)
   (incless-implementation:print-integer *client* object *print-base* stream))
 
+(defmethod print-object ((object float) stream)
+  (incless-implementation:print-float *client* object stream))
+
 (defmethod print-object ((object pathname) stream)
   (incless-implementation:print-pathname *client* object stream))
 

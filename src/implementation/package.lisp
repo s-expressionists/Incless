@@ -9,6 +9,7 @@
            #:print-character
            #:print-complex
            #:print-cons
+           #:print-float
            #:print-integer
            #:print-pathname
            #:print-random-state
