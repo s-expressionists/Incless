@@ -6,6 +6,7 @@
   (declare (ignorable client))
   #+abcl (system:output-object object stream)
   #+(or clasp ecl) (sys:write-object object stream)
+  #+ccl (ccl::write-1 object stream)
   #+cmucl (kernel:output-object object stream)
   #+sbcl (sb-impl::output-object object stream))
 
