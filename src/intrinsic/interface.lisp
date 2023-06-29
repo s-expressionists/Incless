@@ -87,18 +87,12 @@
 (defmethod incless:handle-circle ((client intrinsic-client) object stream function)
   (incless-implementation:handle-circle client object stream function))
 
-(defmethod incless:write-object :around ((client intrinsic-client) object stream)
-  (incless:handle-circle client object stream
-                         (lambda (object stream)
-                           (call-next-method client object stream))))
-
 (defmethod incless:print-object ((client intrinsic-client) object stream)
   (declare (ignore client))
   (print-object object stream))
 
 (defmethod incless:write-object ((client intrinsic-client) object stream)
-  (declare (ignore client))
-  (print-object object stream)
+  (incless:handle-circle client object stream #'print-object)
   object)
 
 (defmethod incless:write-unreadable-object ((client intrinsic-client) object stream type identity function)
