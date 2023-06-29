@@ -13,46 +13,46 @@
 
 (defun handle-circle (client object stream function)
   (declare (ignore client))
-  (flet ((body-fun ()
-           (when (and *circularity-hash-table*
-                      (not (uniquely-identified-by-print-p object)))
-             (multiple-value-bind (current presentp)
-                 (gethash object *circularity-hash-table*)
-               (cond ((and *circularity-hash-table*
-                           *circularity-counter*
-                           (eq t current))
-                      (setf (gethash object *circularity-hash-table*)
-                            (incf *circularity-counter*))
-                      (write-char #\# stream)
-                      (print-object *circularity-counter* stream)
-                      (write-char #\= stream))
-                     ((and *circularity-hash-table*
-                           *circularity-counter*
-                           current)
-                      (write-char #\# stream)
-                      (print-object current stream)
-                      (write-char #\# stream)
-                      (return-from body-fun))
-                     (*circularity-hash-table*
-                      (setf (gethash object *circularity-hash-table*) presentp)))))
-           (funcall function object stream)))
-    (if (and *print-circle*
-             (not *circularity-hash-table*))
-        (let ((*circularity-hash-table* (make-hash-table :test #'eq))
-              (*circularity-counter* nil))
-          (body-fun)
-          (setf *circularity-counter* 0)
-          (body-fun))
-        (body-fun))))
+  (if (or (not *print-circle*)
+          (uniquely-identified-by-print-p object))
+      (funcall function object stream)
+      (flet ((circle-func (stream)
+               (multiple-value-bind (current presentp)
+                   (gethash object *circularity-hash-table*)
+                 (cond ((not *circularity-counter*)
+                        (setf (gethash object *circularity-hash-table*) presentp))
+                       ((eq t current)
+                        (setf (gethash object *circularity-hash-table*)
+                              (incf *circularity-counter*))
+                        (write-char #\# stream)
+                        (print-object *circularity-counter* stream)
+                        (write-char #\= stream))
+                       (current
+                        (write-char #\# stream)
+                        (print-object current stream)
+                        (write-char #\# stream)
+                        (return-from circle-func))))
+               (funcall function object stream)))
+        (if *circularity-hash-table*
+            (circle-func stream)
+            (let ((*circularity-hash-table* (make-hash-table :test #'eq))
+                  (*circularity-counter* nil))
+              (circle-func (make-broadcast-stream))
+              (setf *circularity-counter* 0)
+              (circle-func stream))))))
 
 (defun circle-check (client object)
   (declare (ignore client))
-  (and *print-circle*
-       *circularity-hash-table*
-       *circularity-counter*
-       (not (uniquely-identified-by-print-p object))
-       (gethash object *circularity-hash-table*)
-       t))
+  (if *circularity-counter*
+      (and *print-circle*
+           *circularity-hash-table*
+           (not (uniquely-identified-by-print-p object))
+           (gethash object *circularity-hash-table*)
+           t)
+      (multiple-value-bind (current presentp)
+          (gethash object *circularity-hash-table*)
+        (declare (ignore current))
+        (setf (gethash object *circularity-hash-table*) presentp))))
 
 (defun write-unreadable-object
     (client object stream &optional type identity function)
