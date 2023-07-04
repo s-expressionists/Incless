@@ -29,9 +29,14 @@
     (declare (ignore client))
     (funcall function object stream)))
 
-(defgeneric circle-check (client object)
+(defgeneric circle-check (client object stream)
+  (:method (client object stream)
+    (declare (ignore client object stream))
+    nil))
+
+(defgeneric circle-detection-p (client stream)
   (:method (client object)
-    (declare (ignore client object))
+    (declare (ignore client stream))
     nil))
 
 (defgeneric class-slot-names (client class)

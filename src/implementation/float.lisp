@@ -14,7 +14,8 @@
     (write-char #\0 stream)))
 
 (defun print-float (client value stream)
-  (cond ((zerop value)
+  (cond ((circle-detection-p client stream))
+        ((zerop value)
          (write-char #\0 stream)
          (write-zero-exponent value stream))
         (t

@@ -3,6 +3,7 @@
 (defpackage #:incless-implementation
   (:use #:common-lisp)
   (:export #:circle-check
+           #:circle-detection-p
            #:handle-circle
            #:print-array
            #:print-bit-vector

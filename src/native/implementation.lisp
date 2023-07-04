@@ -54,8 +54,8 @@
   (print-unreadable-object (object stream :type type :identity identity)
     (funcall function)))
 
-(defmethod incless:circle-check ((client native-client) object)
-  (declare (ignore client))
+(defmethod incless:circle-check ((client native-client) object stream)
+  (declare (ignore client stream))
   #+abcl (and (system::check-for-circularity object) t)
   #+clasp (and *print-circle* object core::*circle-counter*
                (if (eq core::*circle-counter* t)

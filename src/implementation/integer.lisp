@@ -85,15 +85,16 @@
   (declare (ignore client))
   ;; Determine whether a radix prefix should be printed, and if so,
   ;; which one.
-  (when *print-radix*
-    (write-radix *print-base* stream))
-  (cond ((zerop integer)
-         (princ #\0 stream))
-        ((minusp integer)
-         (write-sign integer stream)
-         (write-integer-digits (- integer) base stream))
-        (t
-         (write-integer-digits integer base stream)))
-  ;; Determine whether a trailing dot should be printed.
-  (when (and *print-radix* (= *print-base* 10))
-    (princ #\. stream)))
+  (unless (circle-detection-p client stream)
+    (when *print-radix*
+      (write-radix *print-base* stream))
+    (cond ((zerop integer)
+           (princ #\0 stream))
+          ((minusp integer)
+           (write-sign integer stream)
+           (write-integer-digits (- integer) base stream))
+          (t
+           (write-integer-digits integer base stream)))
+    ;; Determine whether a trailing dot should be printed.
+    (when (and *print-radix* (= *print-base* 10))
+      (princ #\. stream))))

@@ -4,6 +4,7 @@
   (:export #:circle-check
            #:class-slot-names
            #:handle-circle
+           #:circle-detection-p
            #:print-object
            #:printer-readtable
            #:write-identity

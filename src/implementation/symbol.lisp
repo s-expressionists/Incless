@@ -86,24 +86,25 @@
       (print-cased-symbol client name stream)))
 
 (defun print-symbol (client sym stream)
-  (let ((package (symbol-package sym))
-        (name (symbol-name sym)))
-    (cond ((or *print-escape* *print-readably*)
-           (cond ((null package)
-                  (write-string "#:" stream))
-                 ((eq package (load-time-value (find-package "KEYWORD")))
-                  (write-string ":" stream))
-                 ((eq package *package*))
-                 (t
-                  (multiple-value-bind (found status)
-                      (find-symbol name)
-                    (unless (and status
-                                 (eq found sym))
-                      (print-symbol-token client (package-name package) stream)
-                      (write-string (if (eq (nth-value 1 (find-symbol name package)) :external)
-                                        ":"
-                                        "::")
-                                    stream)))))
-           (print-symbol-token client name stream))
-          (t
-           (print-cased-symbol client name stream)))))
+  (unless (circle-detection-p client stream)
+    (let ((package (symbol-package sym))
+          (name (symbol-name sym)))
+      (cond ((or *print-escape* *print-readably*)
+             (cond ((null package)
+                    (write-string "#:" stream))
+                   ((eq package (load-time-value (find-package "KEYWORD")))
+                    (write-string ":" stream))
+                   ((eq package *package*))
+                   (t
+                    (multiple-value-bind (found status)
+                        (find-symbol name)
+                      (unless (and status
+                                   (eq found sym))
+                        (print-symbol-token client (package-name package) stream)
+                        (write-string (if (eq (nth-value 1 (find-symbol name package)) :external)
+                                          ":"
+                                          "::")
+                                      stream)))))
+             (print-symbol-token client name stream))
+            (t
+             (print-cased-symbol client name stream))))))

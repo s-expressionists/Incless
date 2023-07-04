@@ -98,5 +98,8 @@
 (defmethod incless:write-unreadable-object ((client intrinsic-client) object stream type identity function)
   (incless-implementation:write-unreadable-object client object stream type identity function))
 
-(defmethod incless:circle-check ((client intrinsic-client) object)
-  (incless-implementation:circle-check client object))
+(defmethod incless:circle-check ((client intrinsic-client) object stream)
+  (incless-implementation:circle-check client object stream))
+
+(defmethod incless:circle-detection-p ((client intrinsic-client) stream)
+  (incless-implementation:circle-detection-p client stream))

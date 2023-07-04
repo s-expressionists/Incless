@@ -29,14 +29,14 @@
                   (setf (gethash object *circularity-hash-table*)
                         (incf *circularity-counter*))
                   (write-char #\# stream)
-                  (print-object *circularity-counter* stream)
+                  (print-integer *circularity-counter* 10 stream)
                   (write-char #\= stream)
                   (funcall function object stream))
                  ((nil)
                   (funcall function object stream))
                  (otherwise
                   (write-char #\# stream)
-                  (print-object marker stream)
+                  (print-integer marker 10 stream)
                   (write-char #\# stream)))))
         (cond ((not *circularity-hash-table*)
                (let ((*circularity-hash-table* (make-hash-table :test #'eq))
@@ -49,8 +49,8 @@
               (t
                (walk stream))))))
 
-(defun circle-check (client object)
-  (declare (ignore client))
+(defun circle-check (client object stream)
+  (declare (ignore client stream))
   (if *circularity-counter*
       (and *print-circle*
            *circularity-hash-table*
@@ -61,6 +61,11 @@
           (gethash object *circularity-hash-table*)
         (declare (ignore current))
         (setf (gethash object *circularity-hash-table*) presentp))))
+
+(defun circle-detection-p (client stream)
+  (declare (ignore client stream))
+  (and *circularity-hash-table*
+       (not *circularity-counter*)))
 
 (defun write-unreadable-object
     (client object stream &optional type identity function)
