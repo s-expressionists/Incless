@@ -17,7 +17,7 @@
            (cond ((null x)
                   (go :end))
                  ((or (not (consp x))
-                      (circle-check client x))
+                      (circle-check client x stream))
                   (go :4))
                  ((or *print-readably*
                       (not *print-length*)
