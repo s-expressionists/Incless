@@ -3,6 +3,7 @@
   (:shadow #:print-object)
   (:export #:circle-check
            #:class-slot-names
+           #:client-form
            #:handle-circle
            #:circle-detection-p
            #:print-object

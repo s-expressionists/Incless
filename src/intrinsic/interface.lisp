@@ -4,6 +4,9 @@
 
 (defvar *client* (make-instance 'intrinsic-client))
 
+(defmethod incless:client-form ((client intrinsic-client))
+  '*client*)
+
 (defgeneric print-object (object stream))
 
 (defun write

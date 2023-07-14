@@ -77,3 +77,5 @@
         #+sbcl sb-impl::*standard-readtable*
         #-sbcl (with-standard-io-syntax *readtable*)
         *readtable*)))
+
+(defgeneric client-form (client))
