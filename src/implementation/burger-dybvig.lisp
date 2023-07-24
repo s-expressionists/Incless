@@ -342,9 +342,10 @@
   (multiple-value-bind (f e)
       (integer-decode-float x)
     ;; adjust mantissa and exponent
-    (let ((diff (- (float-precision x) (float-digits x))))
-      (setf f (* f (expt 2 diff)))
-      (decf e diff))
+    (when (< (float-precision x) (float-digits x))
+      (let ((shift (- (float-digits x) (integer-length f))))
+        (setf f (ash f shift))
+        (decf e shift)))
     (let (r s m+ m-)
       (if (>= e 0)
           (progn (if (= (decode-float x) 0.5)
@@ -374,24 +375,29 @@
               (setf r (* r coeff)
                     m+ (* m+ coeff)
                     m- (* m- coeff))))
-        (loop with result = '()
-              do (multiple-value-bind (quotient remainder)
-                     (floor (* r 10) s)
-                   (setf r remainder
-                         m+ (* m+ 10)
-                         m- (* m- 10))
-                   (if (and (>= r m-) (<= (+ r m+) s))
-                       (push quotient result)
-                       (progn (push (+ quotient
-                                       (if (< r m-)
-                                           (if (> (+ r m+) s)
-                                               ;; break the tie
-                                               (if (< (* 2 r) s) 0 1)
-                                               0)
-                                           1))
-                                    result)
-                              (loop-finish))))
-              finally (return (values (nreverse result) k)))))))
+        (prog ((result (make-array 16
+                        :adjustable t
+                        :fill-pointer 0
+                        :initial-element 0
+                        :element-type '(integer 0 9))))
+         next
+           (multiple-value-bind (quotient remainder)
+               (floor (* r 10) s)
+             (setf r remainder
+                   m+ (* m+ 10)
+                   m- (* m- 10))
+             (when (and (>= r m-) (<= (+ r m+) s))
+               (vector-push-extend quotient result)
+               (go next))
+             (vector-push-extend (+ quotient
+                                    (if (< r m-)
+                                        (if (> (+ r m+) s)
+                                            ;; break the tie
+                                            (if (< (* 2 r) s) 0 1)
+                                            0)
+                                        1))
+                                 result)
+             (return (values result k))))))))
 
 ;;; Test that the two implemetations above give the same result
 ;;; for all single floats.  Running this test may take a few days

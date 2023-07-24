@@ -1,11 +1,13 @@
 (in-package #:incless-implementation)
 
 (defun write-exponent-marker (value stream)
-  (write-char (etypecase value
-                (short-float #\s)
-                (single-float #\f)
-                (double-float #\d)
-                (long-float #\l))
+  (write-char (if (typep value *read-default-float-format*)
+                  #\e
+                  (etypecase value
+                    (short-float #\s)
+                    (single-float #\f)
+                    (double-float #\d)
+                    (long-float #\l)))
               stream))
 
 (defun write-zero-exponent (value stream)
@@ -43,7 +45,7 @@
                                do (write-char #\0 stream))))
                   (write-zero-exponent value stream))
                  (t
-                  (loop for digit in digits
+                  (loop for digit across digits
                         for pos from 0
                         when (= pos 1)
                           do (write-char #\. stream)
