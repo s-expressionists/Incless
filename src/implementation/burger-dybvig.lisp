@@ -223,13 +223,15 @@
 ;;; r < 10^k.  We use the floating-point logarithmic function
 ;;; to find an approximate value of k, then we find the exact
 ;;; one by a small search around the appriximation.
-(defun scale (r)
+(defun scale (r &optional high-ok)
   (let* ((try (1- (ceiling (log r 10))))
          (expt (expt 10 try)))
-    (loop while (<= r expt)
+    (loop while (or (and high-ok (< r expt))
+                    (and (not high-ok) (<= r expt)))
           do (decf try)
              (setf expt (/ expt 10)))
-    (loop until (<= r expt)
+    (loop until (or (and high-ok (< r expt))
+                    (and (not high-ok) (<= r expt)))
           do (incf try)
              (setf expt (* expt 10)))
     try))
@@ -346,7 +348,9 @@
       (let ((shift (- (float-digits x) (integer-length f))))
         (setf f (ash f shift))
         (decf e shift)))
-    (let (r s m+ m-)
+    (let (r s m+ m-
+          (high-ok #+sbcl (evenp f) #-sbcl nil)
+          (low-ok #+sbcl (evenp f) #-sbcl nil))
       (if (>= e 0)
           (progn (if (= (decode-float x) 0.5)
                      (setf m- (expt 2 e)
@@ -368,36 +372,38 @@
                            m+ 1
                            s (* (expt 2 (- e)) 2)
                            r (* f 2)))))
-      (let ((k (scale (/ (+ r m+) s))))
+      (let ((k (scale (/ (+ r m+) s) high-ok)))
         (if (>= k 0)
             (setf s (* s (expt 10 k)))
             (let ((coeff (expt 10 (- k))))
               (setf r (* r coeff)
                     m+ (* m+ coeff)
                     m- (* m- coeff))))
-        (prog ((result (make-array 16
-                        :adjustable t
-                        :fill-pointer 0
-                        :initial-element 0
-                        :element-type '(integer 0 9))))
+        (prog ((result (make-array 16 :adjustable t
+                                      :fill-pointer 0
+                                      :initial-element 0
+                                      :element-type '(integer 0 9)))
+               tc1 tc2)
          next
            (multiple-value-bind (quotient remainder)
                (floor (* r 10) s)
              (setf r remainder
                    m+ (* m+ 10)
-                   m- (* m- 10))
-             (when (and (>= r m-) (<= (+ r m+) s))
-               (vector-push-extend quotient result)
-               (go next))
-             (vector-push-extend (+ quotient
-                                    (if (< r m-)
-                                        (if (> (+ r m+) s)
-                                            ;; break the tie
-                                            (if (< (* 2 r) s) 0 1)
-                                            0)
-                                        1))
-                                 result)
-             (return (values result k))))))))
+                   m- (* m- 10)
+                   tc1 (if low-ok (<= r m-) (< r m-))
+                   tc2 (if high-ok
+                           (>= (+ r m+) s)
+                           (> (+ r m+) s)))
+             (when (or tc1 tc2)
+               (vector-push-extend (if (or (and (not tc1) tc2)
+                                           (not (or (and tc1 (not tc2))
+                                                    (< (* r 2) s))))
+                                       (1+ quotient)
+                                       quotient)
+                                   result)
+               (return (values result k)))
+             (vector-push-extend quotient result)
+             (go next)))))))
 
 ;;; Test that the two implemetations above give the same result
 ;;; for all single floats.  Running this test may take a few days

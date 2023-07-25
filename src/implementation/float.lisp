@@ -30,16 +30,16 @@
                          (write-string "0." stream)
                          (loop repeat (- exponent)
                                do (write-char #\0 stream))
-                         (loop for digit in digits
+                         (loop for digit across digits
                                do (write-char (elt *digits* digit) stream)))
                         ((<= exponent (length digits))
-                         (loop for digit in digits
+                         (loop for digit across digits
                                for pos from 0
                                when (= pos exponent)
                                  do (write-char #\. stream)
                                do (write-char (elt *digits* digit) stream)))
                         (t
-                         (loop for digit in digits
+                         (loop for digit across digits
                                do (write-char (elt *digits* digit) stream))
                          (loop repeat (- exponent (length digits))
                                do (write-char #\0 stream))))
