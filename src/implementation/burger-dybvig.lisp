@@ -224,7 +224,7 @@
 ;;; to find an approximate value of k, then we find the exact
 ;;; one by a small search around the appriximation.
 (defun scale (r &optional high-ok)
-  (let* ((try (1- (ceiling (log r 10))))
+  (let* ((try (1- (ceiling (log (coerce r 'long-float) 10))))
          (expt (expt 10 try)))
     (loop while (or (and high-ok (< r expt))
                     (and (not high-ok) (<= r expt)))
