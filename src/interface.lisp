@@ -35,7 +35,7 @@
     nil))
 
 (defgeneric circle-detection-p (client stream)
-  (:method (client object)
+  (:method (client stream)
     (declare (ignore client stream))
     nil))
 
