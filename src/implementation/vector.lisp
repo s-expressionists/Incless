@@ -6,12 +6,17 @@
          (write-char #\# stream))
         ((or *print-array* *print-readably*)
          (write-string "#(" stream)
-         (loop :with *print-level* = (and *print-level* (max 0 (1- *print-level*)))
-               :with l := (1- (length vec))
-               :for i :below l
-               :do (incless:write-object client (aref vec i) stream)
-                   (write-char #\Space stream)
-               :finally (incless:write-object client (aref vec l) stream))
+         (loop with *print-level* = (and *print-level* (max 0 (1- *print-level*)))
+               for item across vec
+               for index from 0
+               unless (zerop index)
+                 do (write-char #\Space stream)
+               if (or (null *print-length*)
+                      (< index *print-length*))
+                 do (incless:write-object client item stream)
+               else
+                 do (write-string "..." stream)
+                    (loop-finish))
          (write-string ")" stream))
         (t
          (incless:write-unreadable-object client vec stream t t nil)))
