@@ -20,7 +20,7 @@
   (incless-implementation:print-cons *client* object stream))
 
 (defmethod print-object ((object integer) stream)
-  (incless-implementation:print-integer *client* object *print-base* stream))
+  (incless-implementation:print-integer *client* object *print-base* *print-radix* stream))
 
 (defmethod print-object ((object float) stream)
   (incless-implementation:print-float *client* object stream))

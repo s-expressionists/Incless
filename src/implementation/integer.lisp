@@ -85,13 +85,13 @@
   (when (minusp integer)
     (write-char #\- stream)))
 
-(defun print-integer (client integer base stream)
+(defun print-integer (client integer base radix stream)
   (declare (ignore client))
   ;; Determine whether a radix prefix should be printed, and if so,
   ;; which one.
   (unless (circle-detection-p client stream)
-    (when *print-radix*
-      (write-radix *print-base* stream))
+    (when radix
+      (write-radix base stream))
     (cond ((zerop integer)
            (princ #\0 stream))
           ((minusp integer)
@@ -100,5 +100,5 @@
           (t
            (write-integer-digits integer base stream)))
     ;; Determine whether a trailing dot should be printed.
-    (when (and *print-radix* (= *print-base* 10))
+    (when (and radix (= base 10))
       (princ #\. stream))))

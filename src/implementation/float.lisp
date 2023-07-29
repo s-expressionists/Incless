@@ -54,4 +54,4 @@
                           do (write-char #\. stream)
                         do (write-char (elt *digits* digit) stream))
                   (write-exponent-marker value stream)
-                  (print-integer client (1- exponent) 10 stream)))))))
+                  (print-integer client (1- exponent) 10 nil stream)))))))
