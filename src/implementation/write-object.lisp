@@ -9,7 +9,9 @@
 (defun uniquely-identified-by-print-p (x)
   (or (numberp x)
       (characterp x)
-      (symbolp x)))
+      (and (symbolp x)
+           (symbol-package x)
+           t)))
 
 (defun handle-circle (client object stream function)
   (declare (ignore client))
@@ -51,16 +53,19 @@
 
 (defun circle-check (client object stream)
   (declare (ignore client stream))
-  (if *circularity-counter*
-      (and *print-circle*
-           *circularity-hash-table*
-           (not (uniquely-identified-by-print-p object))
-           (gethash object *circularity-hash-table*)
-           t)
-      (multiple-value-bind (current presentp)
-          (gethash object *circularity-hash-table*)
-        (declare (ignore current))
-        (setf (gethash object *circularity-hash-table*) presentp))))
+  (cond (*circularity-counter*
+         (and *print-circle*
+              *circularity-hash-table*
+              (not (uniquely-identified-by-print-p object))
+              (gethash object *circularity-hash-table*)
+              t))
+        (*circularity-hash-table*
+         (multiple-value-bind (current presentp)
+             (gethash object *circularity-hash-table*)
+           (declare (ignore current))
+           (setf (gethash object *circularity-hash-table*) presentp)))
+        (t
+         nil)))
 
 (defun circle-detection-p (client stream)
   (declare (ignore client stream))
