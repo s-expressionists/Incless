@@ -48,8 +48,7 @@
           ((:readably *print-readably*) *print-readably*)
           ((:right-margin *print-right-margin*) *print-right-margin*))
   (with-output-to-string (stream)
-    (incless:write-object *client* object stream))
-  object)
+    (incless:write-object *client* object stream)))
 
 (defun prin1 (object &optional (stream *standard-output*)
               &aux (*print-escape* t))
