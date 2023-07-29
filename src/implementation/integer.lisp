@@ -67,15 +67,19 @@
       (upper integer))))
 
 (defun write-radix (radix stream)
-  (princ (case radix
-           (2 "#b")
-           (8 "#o")
-           (10 "")
-           (16 "#x")
-           (otherwise
-            (write-char #\# stream)
-            (write-integer-digits *print-base* 10 stream)
-            (write-char #\r stream)))))
+  (case radix
+    (2
+     (write-string "#b" stream))
+    (8
+     (write-string "#o" stream))
+    (10
+     (write-string "" stream))
+    (16
+     (write-string "#x" stream))
+    (otherwise
+     (write-char #\# stream)
+     (write-integer-digits *print-base* 10 stream)
+     (write-char #\r stream))))
 
 (defun write-sign (integer stream)
   (when (minusp integer)
