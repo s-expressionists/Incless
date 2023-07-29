@@ -11,6 +11,9 @@
         (write-char #\( stream)
         (tagbody
          :2
+           (when (equal 0 *print-length*)
+             (write-string "..." stream)
+             (go :end))
            (incless:write-object client (car x) stream)
            (incf current-length)
            (setf x (cdr x))
