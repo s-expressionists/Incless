@@ -18,7 +18,9 @@
 (defun print-float (client value stream)
   (cond ((circle-detection-p client stream))
         ((zerop value)
-         (write-char #\0 stream)
+         (when (minusp value)
+           (write-char #\- stream))
+         (write-string "0.0" stream)
          (write-zero-exponent value stream))
         (t
          (when (minusp value)
@@ -32,7 +34,7 @@
                                do (write-char #\0 stream))
                          (loop for digit across digits
                                do (write-char (elt *digits* digit) stream)))
-                        ((<= exponent (length digits))
+                        ((< exponent (length digits))
                          (loop for digit across digits
                                for pos from 0
                                when (= pos exponent)
@@ -42,7 +44,8 @@
                          (loop for digit across digits
                                do (write-char (elt *digits* digit) stream))
                          (loop repeat (- exponent (length digits))
-                               do (write-char #\0 stream))))
+                               do (write-char #\0 stream))
+                         (write-string ".0" stream)))
                   (write-zero-exponent value stream))
                  (t
                   (loop for digit across digits
