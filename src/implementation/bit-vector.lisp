@@ -7,4 +7,4 @@
                initially (write-string "#*" stream)
                do (write-char (if (zerop bit) #\0 #\1) stream)))
         (t
-         (incless:write-unreadable-object client vec t t))))
+         (incless:write-unreadable-object client vec stream t t nil))))
