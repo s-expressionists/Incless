@@ -69,11 +69,12 @@
         with all-dots = t
         for char across name
         finally (return (or all-dots all-digits))
-        when (or (find char "(),|\\`'\";:")
-                 (and (lower-case-p char)
-                      (eq case :upcase))
+        when (or (find char " (),|\\`'\";:
+")
                  (and (upper-case-p char)
-                      (eq case :downcase)))
+                      (eq case :downcase))
+                 (and (lower-case-p char)
+                      #+(or)(eq case :upcase)))
           return t
         when (char/= char #\.)
           do (setf all-dots nil)
@@ -91,7 +92,8 @@
           (name (symbol-name sym)))
       (cond ((or *print-escape* *print-readably*)
              (cond ((null package)
-                    (write-string "#:" stream))
+                    (when (or *print-gensym* *print-readably*)
+                      (write-string "#:" stream)))
                    ((eq package (load-time-value (find-package "KEYWORD")))
                     (write-string ":" stream))
                    ((eq package *package*))
