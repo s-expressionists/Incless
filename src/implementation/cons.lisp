@@ -11,7 +11,8 @@
         (write-char #\( stream)
         (tagbody
          :2
-           (when (equal 0 *print-length*)
+           (when (and (not *print-readably*)
+                      (equal 0 *print-length*))
              (write-string "..." stream)
              (go :end))
            (incless:write-object client (car x) stream)

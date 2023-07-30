@@ -12,6 +12,7 @@
                unless (zerop index)
                  do (write-char #\Space stream)
                if (or (null *print-length*)
+                      *print-readably*
                       (< index *print-length*))
                  do (incless:write-object client item stream)
                else

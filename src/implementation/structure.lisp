@@ -1,13 +1,17 @@
 (in-package #:incless-implementation)
 
 (defun print-structure (client object stream)
-  (cond ((or (typep object 'condition)
+  (cond ((and (not *print-readably*)
+              (eql 0 *print-level*))
+         (write-char #\# stream))
+        ((or (typep object 'condition)
              (packagep object)
              #+sbcl (sb-impl::funcallable-instance-p object))
          (incless:write-unreadable-object client object stream t t nil))
         (t
          (write-string "#S(" stream)
-         (if (equal *print-length* 0)
+         (if (and (not *print-readably*)
+                  (equal *print-length* 0))
              (write-string "..." stream)
              (loop with class = (class-of object)
                    for name in (incless:class-slot-names client class)
@@ -15,6 +19,7 @@
                    initially (let ((*print-escape* t))
                                (incless:write-object client (class-name class) stream))
                    unless (or (null *print-length*)
+                              *print-readably*
                               (< index *print-length*))
                      do (write-string " ..." stream)
                         (loop-finish)
@@ -23,6 +28,7 @@
                         (incless:write-object client (intern (symbol-name name) :keyword)
                                               stream))
                    unless (or (null *print-length*)
+                              *print-readably*
                               (< (1+ index) *print-length*))
                      do (write-string " ..." stream)
                         (loop-finish)
