@@ -1,4 +1,4 @@
-(in-package #:incless-implementation)
+(in-package #:incless)
 
 (defun print-string (client object stream)
   (declare (ignore client))

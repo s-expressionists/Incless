@@ -1,4 +1,4 @@
-(in-package #:incless-implementation)
+(in-package #:incless)
 
 (defun print-cons (client cons stream)
   (if (and (not *print-readably*)
@@ -15,7 +15,7 @@
                       (equal 0 *print-length*))
              (write-string "..." stream)
              (go :end))
-           (incless:write-object client (car x) stream)
+           (write-object client (car x) stream)
            (incf current-length)
            (setf x (cdr x))
            (cond ((null x)
@@ -33,6 +33,6 @@
                   (go :end)))
          :4
            (write-string " . " stream)
-           (incless:write-object client x stream)
+           (write-object client x stream)
          :end)
         (write-char #\) stream))))

@@ -1,4 +1,4 @@
-(cl:in-package #:incless-implementation)
+(cl:in-package #:incless)
 
 (defun print-vector (client vec stream)
   (flet ((print-guts (openp)
@@ -12,7 +12,7 @@
                  if (or (null *print-length*)
                         *print-readably*
                         (< index *print-length*))
-                   do (incless:write-object client item stream)
+                   do (write-object client item stream)
                  else
                    do (write-string "..." stream)
                       (loop-finish))
@@ -25,9 +25,9 @@
                 (or (not (eq t (array-element-type vec)))
                     (some #'zerop (array-dimensions vec))))
            (write-string "#A(" stream)
-           (incless:write-object client (array-element-type vec) stream)
+           (write-object client (array-element-type vec) stream)
            (write-char #\Space stream)
-           (incless:write-object client (array-dimensions vec) stream)
+           (write-object client (array-dimensions vec) stream)
            (write-char #\Space stream)
            (print-guts t)
            (write-char #\) stream))
@@ -36,13 +36,13 @@
                 (or (not (eq t (array-element-type vec)))
                     (some #'zerop (array-dimensions vec))))
            (write-string "#A(" stream)
-           (incless:write-object client (array-dimensions vec) stream)
+           (write-object client (array-dimensions vec) stream)
            (write-char #\Space stream)
-           (incless:write-object client (array-element-type vec) stream)
+           (write-object client (array-element-type vec) stream)
            (write-char #\Space stream)
            (print-guts nil))
           ((or *print-array* *print-readably*)
            (write-char #\# stream)
            (print-guts t))
           (t
-           (incless:write-unreadable-object client vec stream t t nil)))))
+           (write-unreadable-object client vec stream t t nil)))))

@@ -1,4 +1,4 @@
-(in-package #:incless-implementation)
+(in-package #:incless)
 
 (defun print-random-state (client state stream)
   (if (and *print-readably*
@@ -6,6 +6,6 @@
       #+clasp (core:write-ugly-object state stream)
       #+ecl (progn
               (write-string "#$" stream)
-              (incless:write-object client (si:random-state-array state) stream))
+              (write-object client (si:random-state-array state) stream))
       #-(or clasp ecl) (print-structure client state stream)
-      (incless:write-unreadable-object client state stream t nil nil)))
+      (write-unreadable-object client state stream t nil nil)))

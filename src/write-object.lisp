@@ -1,4 +1,4 @@
-(cl:in-package #:incless-implementation)
+(cl:in-package #:incless)
 
 (defvar *current-depth* 0)
 
@@ -13,7 +13,7 @@
            (symbol-package x)
            t)))
 
-(defun handle-circle (client object stream function)
+(defmethod handle-circle (client object stream function)
   (declare (ignore client))
   (if (or (not *print-circle*)
           (uniquely-identified-by-print-p object))
@@ -51,7 +51,7 @@
               (t
                (walk stream))))))
 
-(defun circle-check (client object stream)
+(defmethod circle-check (client object stream)
   (declare (ignore client stream))
   (cond (*circularity-counter*
          (and *print-circle*
@@ -67,26 +67,26 @@
         (t
          nil)))
 
-(defun circle-detection-p (client stream)
+(defmethod circle-detection-p (client stream)
   (declare (ignore client stream))
   (and *circularity-hash-table*
        (not *circularity-counter*)))
 
-(defun write-unreadable-object
-    (client object stream &optional type identity function)
+(defmethod write-unreadable-object
+    (client object stream type identity function)
   (cond (*print-readably*
          (error 'print-not-readable :object object))
         (t
          (write-string "#<" stream)
          (when type
            (let (*print-circle* *print-length* *print-level*)
-             (incless:write-object client (type-of object) stream))
+             (write-object client (type-of object) stream))
            (write-char #\space stream))
          (when function
            (funcall function))
          (when identity
            (when (or function (not type))
              (write-char #\space stream))
-           (incless:write-identity client object stream))
+           (write-identity client object stream))
          (write-char #\> stream)))
   nil)

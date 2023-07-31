@@ -1,4 +1,4 @@
-(cl:in-package #:incless-implementation)
+(cl:in-package #:incless)
 
 ;;; First some background.
 ;;;
@@ -224,7 +224,9 @@
 ;;; to find an approximate value of k, then we find the exact
 ;;; one by a small search around the appriximation.
 (defun scale (r &optional high-ok)
-  (let* ((try (1- (ceiling (log (coerce r 'long-float) 10))))
+  (let* ((try (1- (ceiling (log (max least-positive-long-float
+                                     (min most-positive-long-float
+                                          (coerce r 'long-float))) 10))))
          (expt (expt 10 try)))
     (loop while (or (and high-ok (< r expt))
                     (and (not high-ok) (<= r expt)))
@@ -341,69 +343,73 @@
 ;;; Burger & Dybvig paper.  It is not modeled after their Scheme code,
 ;;; but reimplements the algorithm they present in Common Lisp.
 (defun burger-dybvig-2 (x)
-  (multiple-value-bind (f e)
-      (integer-decode-float x)
-    ;; adjust mantissa and exponent
-    (when (< (float-precision x) (float-digits x))
-      (let ((shift (- (float-digits x) (integer-length f))))
-        (setf f (ash f shift))
-        (decf e shift)))
-    (let (r s m+ m-
-          (high-ok #+sbcl (evenp f) #-sbcl nil)
-          (low-ok #+sbcl (evenp f) #-sbcl nil))
-      (if (>= e 0)
-          (progn (if (= (decode-float x) 0.5)
-                     (setf m- (expt 2 e)
-                           m+ (* m- 2)
-                           s 4
-                           r (* f m+  2))
-                     (setf m- (expt 2 e)
-                           m+ m-
-                           s 2
-                           r (* f m+ 2))))
-          (progn (if (and (= (decode-float x) 0.5)
-                          (= (float-precision x)
-                             (float-precision (predecessor x))))
-                     (setf m- 1
-                           m+ 2
-                           s (* (expt 2 (- 1 e)) 2)
-                           r (* f 4))
-                     (setf m- 1
-                           m+ 1
-                           s (* (expt 2 (- e)) 2)
-                           r (* f 2)))))
-      (let ((k (scale (/ (+ r m+) s) high-ok)))
-        (if (>= k 0)
-            (setf s (* s (expt 10 k)))
-            (let ((coeff (expt 10 (- k))))
-              (setf r (* r coeff)
-                    m+ (* m+ coeff)
-                    m- (* m- coeff))))
-        (prog ((result (make-array 16 :adjustable t
-                                      :fill-pointer 0
-                                      :initial-element 0
-                                      :element-type '(integer 0 9)))
-               tc1 tc2)
-         next
-           (multiple-value-bind (quotient remainder)
-               (floor (* r 10) s)
-             (setf r remainder
-                   m+ (* m+ 10)
-                   m- (* m- 10)
-                   tc1 (if low-ok (<= r m-) (< r m-))
-                   tc2 (if high-ok
-                           (>= (+ r m+) s)
-                           (> (+ r m+) s)))
-             (when (or tc1 tc2)
-               (vector-push-extend (if (or (and (not tc1) tc2)
-                                           (not (or (and tc1 (not tc2))
-                                                    (< (* r 2) s))))
-                                       (1+ quotient)
-                                       quotient)
-                                   result)
-               (return (values result k)))
-             (vector-push-extend quotient result)
-             (go next)))))))
+  (if (zerop x)
+      (values #(0) -1)
+      (multiple-value-bind (f e)
+          (integer-decode-float x)
+        ;; adjust mantissa and exponent
+        (when (< (float-precision x) (float-digits x))
+          (let ((shift (- (float-digits x) (integer-length f))))
+            (setf f (ash f shift))
+            (decf e shift)))
+        (let (r s m+ m-
+                (high-ok #+(or clasp sbcl) (evenp f)
+                         #-(or clasp sbcl) nil)
+                (low-ok #+(or clasp sbcl) (evenp f)
+                        #-(or clasp sbcl) nil))
+          (if (>= e 0)
+              (progn (if (= (decode-float x) 0.5)
+                         (setf m- (expt 2 e)
+                               m+ (* m- 2)
+                               s 4
+                               r (* f m+ 2))
+                         (setf m- (expt 2 e)
+                               m+ m-
+                               s 2
+                               r (* f m+ 2))))
+              (progn (if (and (= (decode-float x) 0.5)
+                              (= (float-precision x)
+                                 (float-precision (predecessor x))))
+                         (setf m- 1
+                               m+ 2
+                               s (* (expt 2 (- 1 e)) 2)
+                               r (* f 4))
+                         (setf m- 1
+                               m+ 1
+                               s (* (expt 2 (- e)) 2)
+                               r (* f 2)))))
+          (let ((k (scale (/ (+ r m+) s) high-ok)))
+            (if (>= k 0)
+                (setf s (* s (expt 10 k)))
+                (let ((coeff (expt 10 (- k))))
+                  (setf r (* r coeff)
+                        m+ (* m+ coeff)
+                        m- (* m- coeff))))
+            (prog ((result (make-array 16 :adjustable t
+                                          :fill-pointer 0
+                                          :initial-element 0
+                                          :element-type '(integer 0 9)))
+                   tc1 tc2)
+             next
+               (multiple-value-bind (quotient remainder)
+                   (floor (* r 10) s)
+                 (setf r remainder
+                       m+ (* m+ 10)
+                       m- (* m- 10)
+                       tc1 (if low-ok (<= r m-) (< r m-))
+                       tc2 (if high-ok
+                               (>= (+ r m+) s)
+                               (> (+ r m+) s)))
+                 (when (or tc1 tc2)
+                   (vector-push-extend (if (or (and (not tc1) tc2)
+                                               (not (or (and tc1 (not tc2))
+                                                        (< (* r 2) s))))
+                                           (1+ quotient)
+                                           quotient)
+                                       result)
+                   (return (values result k)))
+                 (vector-push-extend quotient result)
+                 (go next))))))))
 
 ;;; Test that the two implemetations above give the same result
 ;;; for all single floats.  Running this test may take a few days
@@ -413,7 +419,7 @@
         for i from 0
         until (= x 0)
         do (when (zerop (mod i 1000000))
-             (format *trace-output* "~s~%" x)
+             (cl:format *trace-output* "~s~%" x)
              (finish-output *trace-output*))
         do (multiple-value-bind (d1 k1)
                (burger-dybvig-1 x)
@@ -421,4 +427,4 @@
                  (burger-dybvig-2 x)
                (when (not (and (equal d1 d2)
                                (= k1 k2)))
-                 (format *trace-output* "no: ~s~%" x))))))
+                 (cl:format *trace-output* "no: ~s~%" x))))))

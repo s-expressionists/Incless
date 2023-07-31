@@ -1,4 +1,4 @@
-(in-package #:incless-implementation)
+(in-package #:incless)
 
 (defun print-character (client obj stream)
   (declare (ignore client))

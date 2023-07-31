@@ -1,4 +1,4 @@
-(in-package #:incless-implementation)
+(in-package #:incless)
 
 (defparameter *digits* "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
