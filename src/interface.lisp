@@ -9,7 +9,7 @@
 (defgeneric write-unreadable-object (client object stream type identity function))
 
 (defgeneric write-identity (client object stream)
-  #+(or ccl clasp ecl sbcl)
+  #+(or abcl ccl clasp ecl sbcl)
   (:method (client object stream)
     (declare (ignorable client))
     (write-char #\@ stream)
