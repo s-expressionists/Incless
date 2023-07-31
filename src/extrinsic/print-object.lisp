@@ -28,6 +28,9 @@
 (defmethod print-object ((object pathname) stream)
   (incless-implementation:print-pathname *client* object stream))
 
+(defmethod print-object ((object random-state) stream)
+  (incless-implementation:print-random-state *client* object stream))
+
 (defmethod print-object ((object rational) stream)
   (incless-implementation:print-rational *client* object stream))
 
