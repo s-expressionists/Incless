@@ -35,6 +35,7 @@
            (incless:write-object client (array-element-type arr) stream)
            (write-char #\Space stream)
            (incless:write-object client (array-dimensions arr) stream)
+           (write-char #\Space stream)
            (print-guts '() (array-dimensions arr) *print-level*)
            (write-char #\) stream))
           #+sbcl
