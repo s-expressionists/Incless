@@ -9,18 +9,19 @@
 (defgeneric write-unreadable-object (client object stream type identity function))
 
 (defgeneric write-identity (client object stream)
-  #+(or ccl clasp sbcl)
+  #+(or ccl clasp ecl sbcl)
   (:method (client object stream)
     (declare (ignorable client))
     (write-char #\@ stream)
     #+clasp
     (core:write-addr object stream)
-    #+(or abcl ccl sbcl)
+    #+(or abcl ccl ecl sbcl)
     (let ((*print-radix* t)
           (*print-base* 16))
       (incless:write-object client
                             #+abcl (system:identity-hash-code object)
                             #+ccl (ccl:%address-of object)
+                            #+ecl (si:pointer object)
                             #+sbcl (sb-kernel:get-lisp-obj-address object)
                             stream))))
 
