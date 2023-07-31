@@ -27,6 +27,16 @@
     (cond ((and (not *print-readably*)
                 (equal *print-level* 0))
            (write-char #\# stream))
+          #+(or clasp clisp cmucl ecl mkcl)
+          ((and *print-readably*
+                (or (not (eq t (array-element-type arr)))
+                    (some #'zerop (array-dimensions arr))))
+           (write-string "#A(" stream)
+           (incless:write-object client (array-element-type arr) stream)
+           (write-char #\Space stream)
+           (incless:write-object client (array-dimensions arr) stream)
+           (print-guts '() (array-dimensions arr) *print-level*)
+           (write-char #\) stream))
           #+sbcl
           ((and *print-readably*
                 (or (not (eq t (array-element-type arr)))
