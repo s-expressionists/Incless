@@ -6,7 +6,6 @@
                 :serial t
                 :components ((:file "package")
                              (:file "interface")
-                             (:file "conditions")
                              (:file "write-object")
                              (:file "integer")
                              (:file "rational")
