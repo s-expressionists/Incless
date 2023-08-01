@@ -41,7 +41,10 @@
            (write-object client (array-element-type vec) stream)
            (write-char #\Space stream)
            (print-guts nil))
-          ((or *print-array* *print-readably*)
+          ((or (and *print-readably*
+                    (eq t (array-element-type vec)))
+               (and (not *print-readably*)
+                    *print-array*))
            (write-char #\# stream)
            (print-guts t))
           (t

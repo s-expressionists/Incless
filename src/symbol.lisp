@@ -63,14 +63,16 @@
           do (write-char #\\ stream)
         do (write-char char stream)))
 
+(defvar +quoted-characters+
+  (vector (code-char 0) #\Space #\( #\) #\, #\| #\\ #\` #\' #\" #\; #\: #\Newline))
+
 (defun quote-symbol-p (client name)
   (loop with case = (readtable-case (printer-readtable client))
         with all-digits = t
         with all-dots = t
         for char across name
         finally (return (or all-dots all-digits))
-        when (or (find char " (),|\\`'\";:
-")
+        when (or (find char +quoted-characters+)
                  (and (upper-case-p char)
                       (eq case :downcase))
                  (and (lower-case-p char)

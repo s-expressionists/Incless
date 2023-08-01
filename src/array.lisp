@@ -52,7 +52,11 @@
                   (write-char #\) stream))
                  (t
                   (print-guts '() (array-dimensions arr) *print-level* nil))))
-          ((or *print-array* *print-readably*)
+          ((or (and *print-readably*
+                    (eq t (array-element-type arr))
+                    (notany #'zerop (array-dimensions arr)))
+               (and (not *print-readably*)
+                    *print-array*))
            (write-char #\# stream)
            (write-integer-digits (array-rank arr) 10 stream)
            (write-char #\A stream)

@@ -2,12 +2,16 @@
 
 (defun write-exponent-marker (value stream)
   (write-char (if (typep value *read-default-float-format*)
-                  #\e
+                  #+abcl #\E #-abcl #\e
                   (etypecase value
-                    (short-float #\s)
-                    (single-float #\f)
-                    (double-float #\d)
-                    (long-float #\l)))
+                    (short-float
+                     #+abcl #\S #-abcl #\s)
+                    (single-float
+                     #+abcl #\F #-abcl #\f)
+                    (double-float
+                     #+abcl #\D #-abcl #\d)
+                    (long-float
+                     #+abcl #\L #-abcl #\l)))
               stream))
 
 (defun write-zero-exponent (value stream)
@@ -53,5 +57,7 @@
                         when (= pos 1)
                           do (write-char #\. stream)
                         do (write-char (elt *digits* digit) stream))
+                  (when (= (length digits) 1)
+                    (write-string ".0" stream))
                   (write-exponent-marker value stream)
                   (print-integer client (1- exponent) 10 nil stream)))))))
