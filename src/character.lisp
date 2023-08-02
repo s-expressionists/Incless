@@ -1,7 +1,6 @@
 (in-package #:incless)
 
 (defun print-character (client obj stream)
-  (declare (ignore client))
   (cond ((circle-detection-p client stream))
         ((or *print-escape* *print-readably*)
          (let ((name (char-name obj)))

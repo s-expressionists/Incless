@@ -14,7 +14,6 @@
            t)))
 
 (defmethod handle-circle (client object stream function)
-  (declare (ignore client))
   (if (or (not *print-circle*)
           (uniquely-identified-by-print-p object))
       (funcall function object stream)

@@ -1,7 +1,6 @@
 (in-package #:incless)
 
 (defun print-string (client object stream)
-  (declare (ignore client))
   (cond ((circle-detection-p client stream))
         ((or *print-escape* *print-readably*)
          (loop for x across object

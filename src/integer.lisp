@@ -86,7 +86,6 @@
     (write-char #\- stream)))
 
 (defun print-integer (client integer base radix stream)
-  (declare (ignore client))
   ;; Determine whether a radix prefix should be printed, and if so,
   ;; which one.
   (unless (circle-detection-p client stream)
