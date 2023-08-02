@@ -14,6 +14,8 @@
                   (equal *print-length* 0))
              (write-string "..." stream)
              (loop with class = (class-of object)
+                   with *print-level* = (and *print-level*
+                                             (1- *print-level*))
                    for name in (class-slot-names client class)
                    for index from 1 by 2
                    initially (let ((*print-escape* t))
