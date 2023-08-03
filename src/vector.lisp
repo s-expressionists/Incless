@@ -4,7 +4,8 @@
   (flet ((print-guts (openp)
            (when openp
              (write-char #\( stream))
-           (loop with *print-level* = (and *print-level* (max 0 (1- *print-level*)))
+           (loop with *print-level* = (and *print-level*
+                                           (max 0 (1- *print-level*)))
                  for item across vec
                  for index from 0
                  unless (zerop index)
