@@ -46,7 +46,7 @@
         (digits *digits*))
     (labels ((upper (integer)
                (if (< integer base)
-                   (princ (schar digits integer) stream)
+                   (write-char (schar digits integer) stream)
                    (let* ((binary-length (integer-length integer))
                           (length (max 2 (floor (ash binary-length 1) divisor)))
                           (length/2 (floor length 2))
@@ -57,7 +57,7 @@
                        (lower remainder length/2)))))
              (lower (integer length)
                (if (= length 1)
-                   (princ (schar digits integer) stream)
+                   (write-char (schar digits integer) stream)
                    (let* ((length/2 (floor length 2))
                           (split (expt base length/2)))
                      (multiple-value-bind (quotient remainder)
@@ -65,6 +65,35 @@
                        (lower quotient  (- length length/2))
                        (lower remainder length/2))))))
       (upper integer))))
+
+(defun write-integer-digits-alt (integer base stream)
+  (cond ((member base '(2 4 8 16 32))
+         (prog* ((size (integer-length (1- base)))
+                 (position (* size (1- (ceiling (integer-length integer) size)))))
+          print
+            (unless (minusp position)
+              (write-char (schar *digits* (ldb (byte size position) integer)) stream)
+              (decf position size)
+              (go print))))
+        ((typep integer 'fixnum)
+         (labels ((write-digit (value)
+                    (multiple-value-bind (q r)
+                        (floor value base)
+                      (unless (zerop q)
+                        (write-digit q))
+                      (write-char (schar *digits* r) stream))))
+           (write-digit integer)))
+        (t
+         (prog ((q integer) (r 0) result)
+          repeat
+            (multiple-value-setq (q r) (floor q base))
+            (push (schar *digits* r) result)
+            (unless (zerop q)
+              (go repeat))
+          print
+            (when result
+              (write-char (pop result) stream)
+              (go print))))))
 
 (defun write-radix (radix stream)
   (case radix
@@ -92,7 +121,7 @@
     (when radix
       (write-radix base stream))
     (cond ((zerop integer)
-           (princ #\0 stream))
+           (write-char #\0 stream))
           ((minusp integer)
            (write-sign integer stream)
            (write-integer-digits (- integer) base stream))
@@ -100,4 +129,4 @@
            (write-integer-digits integer base stream)))
     ;; Determine whether a trailing dot should be printed.
     (when (and radix (= base 10))
-      (princ #\. stream))))
+      (write-char #\. stream))))
