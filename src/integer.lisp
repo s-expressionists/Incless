@@ -66,7 +66,7 @@
       (upper integer))))
 
 (defun write-integer-digits-alt (integer base stream)
-  (cond ((member base '(2 4 8 16 32))
+  (cond ((= (logcount base) 1)
          (prog* ((size (integer-length (1- base)))
                  (position (* size (1- (ceiling (integer-length integer) size)))))
           print
