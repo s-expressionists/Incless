@@ -11,8 +11,7 @@
                 :pathname "src/extrinsic/"
                 :serial t
                 :components ((:file "package")
-                             (:file "interface")
-                             (:file "print-object")))))
+                             (:file "interface")))))
 
 ;;; This is really a test of the whole printer suite. It's not
 ;;; really possible to test the printer without testing the

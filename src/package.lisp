@@ -9,6 +9,7 @@
            #:circle-detection-p
            #:class-slot-names
            #:client-form
+           #:define-interface
            #:handle-circle
            #:print-array
            #:print-bit-vector

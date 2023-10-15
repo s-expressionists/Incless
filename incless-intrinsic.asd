@@ -10,5 +10,4 @@
                 :pathname "src/intrinsic/"
                 :serial t
                 :components ((:file "package")
-                             (:file "interface")
-                             (:file "print-object")))))
+                             (:file "interface")))))

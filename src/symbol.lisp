@@ -66,22 +66,43 @@
 (defvar +quoted-characters+
   (vector (code-char 0) #\Space #\( #\) #\, #\| #\\ #\` #\' #\" #\; #\: #\Newline))
 
+(defvar +initial-number-characters+
+  ".+-/^_")
+
+(defvar +middle-number-characters+
+  ".+-/^_eEsSfFdDlL")
+
+(defvar +final-number-characters+
+  "./^_eEsSfFdDlL")
+
 (defun quote-symbol-p (client name)
   (loop with case = (readtable-case (printer-readtable client))
-        with all-digits = t
+        with number-p = t
+        with one-digit = nil
         with all-dots = t
         for char across name
-        finally (return (or all-dots all-digits))
+        for index from 0
+        for b downfrom (1- (length name))
+        for digit-char-p = (digit-char-p char *print-base*)
+        finally (return (or all-dots
+                            (and one-digit number-p)))
         when (or (find char +quoted-characters+)
                  (and (upper-case-p char)
                       (eq case :downcase))
-                 (and (lower-case-p char)
-                      #+(or)(eq case :upcase)))
+                 (and (lower-case-p char)))
           return t
         when (char/= char #\.)
           do (setf all-dots nil)
-        when (not (digit-char-p char *print-base*))
-          do (setf all-digits nil)))
+        when digit-char-p
+          do (setf one-digit t)
+        when (and (not digit-char-p)
+                  (not (find char (cond ((zerop index)
+                                         +initial-number-characters+)
+                                        ((zerop b)
+                                         +final-number-characters+)
+                                        (t
+                                         +middle-number-characters+)))))
+          do (setf number-p nil)))
 
 (defun print-symbol-token (client name stream)
   (if (quote-symbol-p client name)
