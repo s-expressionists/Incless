@@ -1,5 +1,11 @@
 (in-package #:incless)
 
+(declaim (inline coerce-output-stream-designator
+                 ensure-symbol))
+
+(defun ensure-symbol (name &optional (package *package*))
+  (intern (string name) package))
+
 (defvar *client* nil)
 
 (defgeneric write-object (client object stream))
@@ -75,14 +81,14 @@
 
 (defmacro define-interface (client-var client-class &optional intrinsic)
   (let* ((pkg (if intrinsic (find-package "COMMON-LISP") *package*))
-         (print-object-name (intern "PRINT-OBJECT" pkg)))
+         (print-object-name (ensure-symbol '#:print-object pkg)))
     `(progn
        (defmethod client-form ((client ,client-class))
          ',client-var)
 
        (defgeneric ,print-object-name (object stream))
 
-       (defun ,(intern "WRITE" pkg)
+       (defun ,(ensure-symbol '#:write pkg)
            (object
             &key (stream *standard-output*)
               ((:array *print-array*) *print-array*)
@@ -103,7 +109,7 @@
          (write-object ,client-var object stream)
          object)
 
-       (defun ,(intern "WRITE-TO-STRING" pkg)
+       (defun ,(ensure-symbol '#:write-to-string pkg)
            (object
             &key ((:array *print-array*) *print-array*)
               ((:base *print-base*) *print-base*)
@@ -123,43 +129,43 @@
          (with-output-to-string (stream)
            (write-object ,client-var object stream)))
 
-       (defun ,(intern "PRIN1" pkg) (object &optional (stream *standard-output*)
+       (defun ,(ensure-symbol '#:prin1 pkg) (object &optional (stream *standard-output*)
                                      &aux (*print-escape* t))
          (write-object ,client-var object stream)
          object)
 
-       (defun ,(intern "PRINC" pkg) (object &optional (stream *standard-output*)
+       (defun ,(ensure-symbol '#:princ pkg) (object &optional (stream *standard-output*)
                                      &aux (*print-escape* nil)
                                        (*print-readably* nil))
          (write-object ,client-var object stream)
          object)
 
-       (defun ,(intern "PRINT" pkg) (object &optional (stream *standard-output*)
+       (defun ,(ensure-symbol '#:print pkg) (object &optional (stream *standard-output*)
                                      &aux (*print-escape* t))
          (write-char #\Newline stream)
          (write-object ,client-var object stream)
          (write-char #\Space stream)
          object)
 
-       (defun ,(intern "PPRINT" pkg) (object &optional (stream *standard-output*)
+       (defun ,(ensure-symbol '#:pprint pkg) (object &optional (stream *standard-output*)
                                       &aux (*print-escape* t)
                                         (*print-pretty* t))
          (write-char #\Newline stream)
          (write-object ,client-var object stream)
          (values))
 
-       (defun ,(intern "PRIN1-TO-STRING" pkg) (object
+       (defun ,(ensure-symbol '#:prin1-to-string pkg) (object
                                                &aux (*print-escape* t))
          (with-output-to-string (stream)
            (write-object ,client-var object stream)))
 
-       (defun ,(intern "PRINC-TO-STRING" pkg) (object
+       (defun ,(ensure-symbol '#:princ-to-string pkg) (object
                                                &aux (*print-escape* nil)
                                                  (*print-readably* nil))
          (with-output-to-string (stream)
            (write-object ,client-var object stream)))
 
-       (defmacro ,(intern "PRINT-UNREADABLE-OBJECT" pkg)
+       (defmacro ,(ensure-symbol '#:print-unreadable-object pkg)
            ((object stream &key type identity) &body body)
          (list 'write-unreadable-object
                ,client-var object stream type identity
