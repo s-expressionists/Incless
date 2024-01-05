@@ -10,7 +10,7 @@ implementations that this system has been tested on.
 
 In addition to a clone of this repository in a location that is
 discoverable by ASDF you will also need a clone of
-[nontrivial-streams-streams][].  Incless does not implement pretty
+[nontrivial-gray-streams][].  Incless does not implement pretty
 printing or `format`. These systems are implemented by [Inravina][]
 and [Invistra][] which work in coordination with Incless.
 
