@@ -106,7 +106,7 @@
      (write-string "#x" stream))
     (otherwise
      (write-char #\# stream)
-     (write-integer-digits *print-base* 10 stream)
+     (write-integer-digits-alt *print-base* 10 stream)
      (write-char #\r stream))))
 
 (defun write-sign (integer stream)
@@ -123,9 +123,9 @@
            (write-char (char *digit-chars* 0) stream))
           ((minusp integer)
            (write-sign integer stream)
-           (write-integer-digits (- integer) base stream))
+           (write-integer-digits-alt (- integer) base stream))
           (t
-           (write-integer-digits integer base stream)))
+           (write-integer-digits-alt integer base stream)))
     ;; Determine whether a trailing dot should be printed.
     (when (and radix (= base 10))
       (write-char #\. stream))))

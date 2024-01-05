@@ -10,9 +10,9 @@ implementations that this system has been tested on.
 
 In addition to a clone of this repository in a location that is
 discoverable by ASDF you will also need a clone of
-[trivial-stream-column][].  Incless does not implement pretty printing
-or `format`. These systems are implemented by [Inravina][] and
-[Invistra][] which work in coordination with Incless.
+[nontrivial-streams-streams][].  Incless does not implement pretty
+printing or `format`. These systems are implemented by [Inravina][]
+and [Invistra][] which work in coordination with Incless.
 
 # Usage
 
@@ -57,5 +57,5 @@ NIL
 [Invistra]: https://github.com/s-expressionists/Invistra
 [SBCL]: http://sbcl.org
 [SICL]: https://github.com/robert-strandh/SICL
-[trivial-stream-column]: https://github.com/yitzchak/trivial-stream-column
+[nontrivial-gray-streams]: https://github.com/yitzchak/nontrivial-gray-streams
 
