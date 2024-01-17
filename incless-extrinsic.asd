@@ -21,7 +21,7 @@
   :description "ANSI Test system for Inravina"
   :license "MIT"
   :author "Tarn W. Burton"
-  :depends-on ("alexandria"
+  :depends-on ("ansi-test-harness"
                "invistra-extrinsic")
   :perform (test-op (op c)
              (symbol-call :incless-extrinsic/test :test))
@@ -29,11 +29,5 @@
                 :pathname "src/extrinsic/test/"
                 :serial t
                 :components ((:file "packages")
-                             (:file "test")))
-               (:module "expected-failures"
-                :pathname "src/extrinsic/test/expected-failures"
-                :components ((:static-file "default.sexp")
-                             (:static-file "abcl.sexp")
-                             (:static-file "clasp.sexp")
-                             (:static-file "ecl.sexp")
-                             (:static-file "sbcl.sexp")))))
+                             (:file "test")
+                             (:static-file "expected-failures.sexp")))))

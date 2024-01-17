@@ -48,4 +48,4 @@ jobs:
         asdf-add
     - name: Run ANSI Tests
       run: |
-        lisp -i ${{ matrix.lisp }} -e "(ql:quickload :incless-extrinsic/test)" -e "(asdf:test-system :incless-extrinsic)"
+        lisp -i ${{ matrix.lisp }} -e "(ql:quickload :incless-extrinsic/test)" -e "(incless-extrinsic/test:test :exit t)"
