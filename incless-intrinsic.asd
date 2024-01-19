@@ -6,8 +6,8 @@
   :license  "BSD"
   :version "0.0.1"
   :depends-on ("incless")
-  :components ((:module "src"
-                :pathname "src/intrinsic/"
+  :components ((:module "code"
+                :pathname "code/intrinsic/"
                 :serial t
                 :components ((:file "package")
                              (:file "interface")))))

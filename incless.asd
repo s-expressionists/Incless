@@ -2,7 +2,7 @@
 
 (asdf:defsystem #:incless
   :description "Core interface of printer"
-  :components ((:module "src"
+  :components ((:module "code"
                 :serial t
                 :components ((:file "package")
                              (:file "interface")

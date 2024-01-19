@@ -7,8 +7,8 @@
   :version "0.0.1"
   :depends-on ("incless")
   :in-order-to ((test-op (test-op "incless-extrinsic/test")))
-  :components ((:module "src"
-                :pathname "src/extrinsic/"
+  :components ((:module "code"
+                :pathname "code/extrinsic/"
                 :serial t
                 :components ((:file "package")
                              (:file "interface")))))
@@ -26,7 +26,7 @@
   :perform (test-op (op c)
              (symbol-call :incless-extrinsic/test :test))
   :components ((:module "code"
-                :pathname "src/extrinsic/test/"
+                :pathname "code/extrinsic/test/"
                 :serial t
                 :components ((:file "packages")
                              (:file "test")
