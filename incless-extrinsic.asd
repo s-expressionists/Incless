@@ -1,10 +1,13 @@
-;;;; incless.asd
-
 (asdf:defsystem "incless-extrinsic"
-  :description "A portable, extensible Common Lisp printer."
-  :author "Lonjil <lonjil@gmail.com>"
-  :license  "BSD"
-  :version "0.0.1"
+  :description "A portable and extensible Common Lisp printer implementation (extrinsic interface)"
+  :license "BSD"
+  :author ("Tarn W. Burton"
+           "Robert Strandh"
+           "Lonjil")
+  :maintainer "Tarn W. Burton"
+  :version (:read-file-form "version.sexp")
+  :homepage "https://github.com/s-expressionists/Incless"
+  :bug-tracker "https://github.com/s-expressionists/Incless/issues"
   :depends-on ("incless")
   :in-order-to ((test-op (test-op "incless-extrinsic/test")))
   :components ((:module "code"
@@ -18,9 +21,15 @@
 ;;; pretty printer at the same time so we might as well test
 ;;; format at the same time.
 (defsystem "incless-extrinsic/test"
-  :description "ANSI Test system for Inravina"
-  :license "MIT"
-  :author "Tarn W. Burton"
+  :description "ANSI Test system for Incless"
+  :license "BSD"
+  :author ("Tarn W. Burton"
+           "Robert Strandh"
+           "Lonjil")
+  :maintainer "Tarn W. Burton"
+  :version (:read-file-form "version.sexp")
+  :homepage "https://github.com/s-expressionists/Incless"
+  :bug-tracker "https://github.com/s-expressionists/Incless/issues"
   :depends-on ("ansi-test-harness"
                "invistra-extrinsic")
   :perform (test-op (op c)
