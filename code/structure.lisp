@@ -6,6 +6,7 @@
          (write-char #\# stream))
         ((or (typep object 'condition)
              (packagep object)
+             (hash-table-p object)
              #+sbcl (sb-impl::funcallable-instance-p object))
          (write-unreadable-object client object stream t t nil))
         (t
