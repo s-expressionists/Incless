@@ -1,4 +1,4 @@
-#+(or clasp ecl sbcl) :NIL-VECTORS-ARE-STRINGS
+#+(or allegro ccl clasp cmucl ecl sbcl) :NIL-VECTORS-ARE-STRINGS
 #+(or clasp ecl) :ALLOW-NIL-ARRAYS
 #+(or clasp ecl) :MAKE-CONDITION-WITH-COMPOUND-NAME
 #+(or clasp ecl) :NO-FLOATING-POINT-UNDERFLOW-BY-DEFAULT
