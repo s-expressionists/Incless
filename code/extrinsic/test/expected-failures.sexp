@@ -13,6 +13,11 @@
 #+sbcl PRINT.BACKQUOTE.RANDOM.13
 #+sbcl PRINT.BACKQUOTE.RANDOM.14
 
-#+(or abcl clasp ecl sbcl) FORMAT.E.26
+#+(or abcl ccl clasp cmucl ecl sbcl) FORMAT.E.26
+
 #+clasp PRINT.DOUBLE-FLOAT.RANDOM
 #+clasp PRINT.LONG-FLOAT.RANDOM
+
+#+cmucl FORMAT.{.ERROR.5
+#+cmucl |FORMAT.:{.ERROR.3|
+#+cmucl |FORMAT.:@{.ERROR.5|
