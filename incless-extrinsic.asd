@@ -8,7 +8,8 @@
   :version (:read-file-form "version.sexp")
   :homepage "https://github.com/s-expressionists/Incless"
   :bug-tracker "https://github.com/s-expressionists/Incless/issues"
-  :depends-on ("incless")
+  :depends-on ("incless"
+               "quaviver/burger-dybvig")
   :in-order-to ((test-op (test-op "incless-extrinsic/test")))
   :components ((:module "code"
                 :pathname "code/extrinsic/"

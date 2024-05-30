@@ -10,6 +10,7 @@
   :version (:read-file-form "version.sexp")
   :homepage "https://github.com/s-expressionists/Incless"
   :bug-tracker "https://github.com/s-expressionists/Incless/issues"
+  :depends-on ("quaviver")
   :components ((:module "code"
                 :serial t
                 :components ((:file "package")
@@ -17,7 +18,6 @@
                              (:file "write-object")
                              (:file "integer")
                              (:file "rational")
-                             (:file "burger-dybvig")
                              (:file "float")
                              (:file "complex")
                              (:file "character")
