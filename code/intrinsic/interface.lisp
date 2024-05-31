@@ -1,7 +1,11 @@
 (in-package #:incless-intrinsic)
 
-(defclass intrinsic-client (quaviver/burger-dybvig:client-2) ())
+(defclass intrinsic-client () ())
 
-(defvar *client* (make-instance 'intrinsic-client))
+(defclass intrinsic-client-impl
+    (intrinsic-client quaviver/burger-dybvig:client-2)
+  ())
+
+(defvar *client* (make-instance 'intrinsic-client-impl))
 
 (incless:define-interface *client* intrinsic-client t)

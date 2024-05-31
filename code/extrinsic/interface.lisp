@@ -1,7 +1,11 @@
 (in-package #:incless-extrinsic)
 
-(defclass extrinsic-client (quaviver/burger-dybvig:client-2) ())
+(defclass extrinsic-client () ())
 
-(defvar *client* (make-instance 'extrinsic-client))
+(defclass extrinsic-client-impl
+    (extrinsic-client quaviver/burger-dybvig:client-2)
+  ())
+
+(defvar *client* (make-instance 'extrinsic-client-impl))
 
 (incless:define-interface *client* extrinsic-client)
