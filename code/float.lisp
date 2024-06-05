@@ -30,7 +30,7 @@
          (write-zero-exponent value stream))
         (t
          (multiple-value-bind (digits exponent sign)
-             (quaviver:float-to-digits client value)
+             (quaviver:float-decimal client value)
            (when (minusp sign)
              (write-char #\- stream))
            (cond ((<= 1e-3 (abs value) 1e7)
