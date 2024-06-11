@@ -31,6 +31,7 @@
         (t
          (multiple-value-bind (digits exponent sign)
              (quaviver:float-decimal client value)
+           (incf exponent (length digits))
            (when (minusp sign)
              (write-char #\- stream))
            (cond ((<= 1e-3 (abs value) 1e7)
