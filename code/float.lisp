@@ -30,7 +30,8 @@
          (write-zero-exponent value stream))
         (t
          (multiple-value-bind (digits exponent sign)
-             (quaviver:float-decimal client value)
+             (quaviver:float-integer client 10 value)
+           (setf digits (quaviver:integer-digits client 'vector 10 digits))
            (incf exponent (length digits))
            (when (minusp sign)
              (write-char #\- stream))
