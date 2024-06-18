@@ -20,51 +20,105 @@
     (write-char (char *digit-chars* 0) stream)))
 
 (defun print-float (client value stream)
-  (cond ((circle-detection-p client stream))
-        ((zerop value)
-         (when (minusp (float-sign value))
-           (write-char #\- stream))
-         (write-char (char *digit-chars* 0) stream)
-         (write-char #\. stream)
-         (write-char (char *digit-chars* 0) stream)
-         (write-zero-exponent value stream))
-        (t
-         (multiple-value-bind (digits exponent sign)
-             (quaviver:float-integer client 10 value)
-           (setf digits (quaviver:integer-digits client 'vector 10 digits))
-           (incf exponent (length digits))
-           (when (minusp sign)
-             (write-char #\- stream))
-           (cond ((<= 1e-3 (abs value) 1e7)
-                  (cond ((not (plusp exponent))
-                         (write-char (char *digit-chars* 0) stream)
-                         (write-char #\. stream)
-                         (loop repeat (- exponent)
-                               do (write-char (char *digit-chars* 0) stream))
-                         (loop for digit across digits
-                               do (write-char (char *digit-chars* digit) stream)))
-                        ((< exponent (length digits))
-                         (loop for digit across digits
-                               for pos from 0
-                               when (= pos exponent)
-                                 do (write-char #\. stream)
-                               do (write-char (char *digit-chars* digit) stream)))
-                        (t
-                         (loop for digit across digits
-                               do (write-char (char *digit-chars* digit) stream))
-                         (loop repeat (- exponent (length digits))
-                               do (write-char (char *digit-chars* 0) stream))
-                         (write-char #\. stream)
-                         (write-char (char *digit-chars* 0) stream)))
-                  (write-zero-exponent value stream))
-                 (t
-                  (loop for digit across digits
-                        for pos from 0
-                        when (= pos 1)
-                          do (write-char #\. stream)
-                        do (write-char (char *digit-chars* digit) stream))
-                  (when (= (length digits) 1)
-                    (write-char #\. stream)
-                    (write-char (char *digit-chars* 0) stream))
-                  (write-exponent-marker value stream)
-                  (print-integer client (1- exponent) 10 nil stream)))))))
+  (unless (circle-detection-p client stream)
+    (multiple-value-bind (significand exponent sign)
+        (quaviver:float-integer client 10 value)
+      (cond ((keywordp exponent)
+             (write-read-eval client value stream
+                              (ecase exponent
+                                (:infinity
+                                 (if (minusp sign)
+                                     (etypecase value
+                                       (single-float
+                                        #+(or abcl clasp cmucl ecl)
+                                        'ext:single-float-negative-infinity
+                                        #+sbcl
+                                        'sb-ext:single-float-negative-infinity)
+                                       (double-float
+                                        #+(or abcl clasp cmucl ecl)
+                                        'ext:double-float-negative-infinity
+                                        #+sbcl
+                                        'sb-ext:double-float-negative-infinity)
+                                       #+(and ecl long-float)
+                                       (long-float
+                                        'ext:long-float-negative-infinity))
+                                     (etypecase value
+                                       (single-float
+                                        #+(or abcl clasp cmucl ecl)
+                                        'ext:single-float-positive-infinity
+                                        #+sbcl
+                                        'sb-ext:single-float-positive-infinity)
+                                       (double-float
+                                        #+(or abcl clasp cmucl ecl)
+                                        'ext:double-float-positive-infinity
+                                        #+sbcl
+                                        'sb-ext:double-float-positive-infinity)
+                                       #+(and ecl long-float)
+                                       (long-float
+                                        'ext:long-float-positive-infinity))))
+                                ((:quiet-nan :signaling-nan)
+                                 #+abcl
+                                 `(/ ,(coerce 0 (type-of value))
+                                     ,(coerce 0 (type-of value)))
+                                 #+allegro
+                                 (etypecase value
+                                   (single-float
+                                    'excl:*nan-single*)
+                                   (single-float
+                                    'excl:*nan-double*))
+                                 #+ecl
+                                 `(coerce (sys:nan) ',(type-of value))))
+                              t nil
+                              (lambda ()
+                                (write-object client exponent stream)
+                                (write-char #\space stream)
+                                (write-object client
+                                              (if (eq exponent :infinity)
+                                                  sign
+                                                  significand)
+                                              stream))))
+            ((zerop significand)
+             (when (minusp sign)
+               (write-char #\- stream))
+             (write-char (char *digit-chars* 0) stream)
+             (write-char #\. stream)
+             (write-char (char *digit-chars* 0) stream)
+             (write-zero-exponent value stream))
+            (t
+             (setf significand (quaviver:integer-digits client 'vector 10 significand))
+             (incf exponent (length significand))
+             (when (minusp sign)
+               (write-char #\- stream))
+             (cond ((<= 1e-3 (abs value) 1e7)
+                    (cond ((not (plusp exponent))
+                           (write-char (char *digit-chars* 0) stream)
+                           (write-char #\. stream)
+                           (loop repeat (- exponent)
+                                 do (write-char (char *digit-chars* 0) stream))
+                           (loop for digit across significand
+                                 do (write-char (char *digit-chars* digit) stream)))
+                          ((< exponent (length significand))
+                           (loop for digit across significand
+                                 for pos from 0
+                                 when (= pos exponent)
+                                   do (write-char #\. stream)
+                                 do (write-char (char *digit-chars* digit) stream)))
+                          (t
+                           (loop for digit across significand
+                                 do (write-char (char *digit-chars* digit) stream))
+                           (loop repeat (- exponent (length significand))
+                                 do (write-char (char *digit-chars* 0) stream))
+                           (write-char #\. stream)
+                           (write-char (char *digit-chars* 0) stream)))
+                    (write-zero-exponent value stream))
+                   (t
+                    (loop for digit across significand
+                          for pos from 0
+                          when (= pos 1)
+                            do (write-char #\. stream)
+                          do (write-char (char *digit-chars* digit) stream))
+                    (when (= (length significand) 1)
+                      (write-char #\. stream)
+                      (write-char (char *digit-chars* 0) stream))
+                    (write-exponent-marker value stream)
+                    (print-integer client (1- exponent) 10 nil stream))))))))

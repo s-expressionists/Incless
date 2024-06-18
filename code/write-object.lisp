@@ -89,3 +89,12 @@
            (write-identity client object stream))
          (write-char #\> stream)))
   nil)
+
+(defun write-read-eval (client object stream form type identity function)
+  (cond ((and form
+              *print-readably*
+              *read-eval*)
+         (write-string "#." stream)
+         (write-object client form stream))
+        (t
+         (write-unreadable-object client object stream type identity function))))
