@@ -3,7 +3,7 @@
 (defclass extrinsic-client () ())
 
 (defclass extrinsic-client-impl
-    (extrinsic-client quaviver/burger-dybvig:client)
+    (extrinsic-client quaviver/shubfach:client)
   ())
 
 (defvar *client* (make-instance 'extrinsic-client-impl))

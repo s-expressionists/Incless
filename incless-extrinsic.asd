@@ -9,7 +9,7 @@
   :homepage "https://github.com/s-expressionists/Incless"
   :bug-tracker "https://github.com/s-expressionists/Incless/issues"
   :depends-on ("incless"
-               "quaviver/burger-dybvig")
+               "quaviver/schubfach")
   :in-order-to ((test-op (test-op "incless-extrinsic/test")))
   :components ((:module "code"
                 :pathname "code/extrinsic/"

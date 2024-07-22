@@ -3,7 +3,7 @@
 (defclass intrinsic-client () ())
 
 (defclass intrinsic-client-impl
-    (intrinsic-client quaviver/burger-dybvig:client)
+    (intrinsic-client quaviver/shucbfach:client)
   ())
 
 (defvar *client* (make-instance 'intrinsic-client-impl))
