@@ -85,7 +85,7 @@
              (write-char (char *digit-chars* 0) stream)
              (write-zero-exponent value stream))
             (t
-             (setf significand (quaviver:integer-digits client 'vector 10 significand))
+             (setf significand (quaviver:compose-digits client 'vector 10 significand))
              (incf exponent (length significand))
              (when (minusp sign)
                (write-char #\- stream))
