@@ -80,45 +80,27 @@
             ((zerop significand)
              (when (minusp sign)
                (write-char #\- stream))
-             (write-char (char *digit-chars* 0) stream)
-             (write-char #\. stream)
-             (write-char (char *digit-chars* 0) stream)
+             (write-string "0.0" stream)
              (write-zero-exponent value stream))
             (t
-             (setf significand (quaviver:compose-digits client 'vector 10 significand))
-             (incf exponent (length significand))
-             (when (minusp sign)
-               (write-char #\- stream))
-             (cond ((<= 1e-3 (abs value) 1e7)
-                    (cond ((not (plusp exponent))
-                           (write-char (char *digit-chars* 0) stream)
-                           (write-char #\. stream)
-                           (loop repeat (- exponent)
-                                 do (write-char (char *digit-chars* 0) stream))
-                           (loop for digit across significand
-                                 do (write-char (char *digit-chars* digit) stream)))
-                          ((< exponent (length significand))
-                           (loop for digit across significand
-                                 for pos from 0
-                                 when (= pos exponent)
-                                   do (write-char #\. stream)
-                                 do (write-char (char *digit-chars* digit) stream)))
-                          (t
-                           (loop for digit across significand
-                                 do (write-char (char *digit-chars* digit) stream))
-                           (loop repeat (- exponent (length significand))
-                                 do (write-char (char *digit-chars* 0) stream))
-                           (write-char #\. stream)
-                           (write-char (char *digit-chars* 0) stream)))
-                    (write-zero-exponent value stream))
-                   (t
-                    (loop for digit across significand
-                          for pos from 0
-                          when (= pos 1)
-                            do (write-char #\. stream)
-                          do (write-char (char *digit-chars* digit) stream))
-                    (when (= (length significand) 1)
-                      (write-char #\. stream)
-                      (write-char (char *digit-chars* 0) stream))
-                    (write-exponent-marker value stream)
-                    (print-integer client (1- exponent) 10 nil stream))))))))
+             (let ((significand-length (quaviver.math:ceiling-log significand 10)))
+               (incf exponent significand-length)
+               (when (minusp sign)
+                 (write-char #\- stream))
+               (cond ((<= 1e-3 (abs value) 1e7)
+                      (unless (plusp exponent)
+                        (write-char #\0 stream))
+                      (quaviver:write-digits client 10 significand stream
+                                             :decimal-marker #\.
+                                             :decimal-position exponent)
+                      (unless (< exponent significand-length)
+                        (write-char (char *digit-chars* 0) stream))
+                      (write-zero-exponent value stream))
+                     (t
+                      (quaviver:write-digits client 10 significand stream
+                                             :decimal-marker #\.
+                                             :decimal-position 1)
+                      (when (= significand-length 1)
+                        (write-char #\0 stream))
+                      (write-exponent-marker value stream)
+                      (print-integer client (1- exponent) 10 nil stream)))))))))
