@@ -83,24 +83,28 @@
              (write-string "0.0" stream)
              (write-zero-exponent value stream))
             (t
-             (let ((significand-length (quaviver.math:ceiling-log significand 10)))
+             (let ((significand-length (quaviver.math:count-digits 10 significand)))
                (incf exponent significand-length)
                (when (minusp sign)
                  (write-char #\- stream))
                (cond ((<= 1e-3 (abs value) 1e7)
-                      (unless (plusp exponent)
-                        (write-char #\0 stream))
-                      (quaviver:write-digits client 10 significand stream
+                      (quaviver:write-digits 10
+                                             (if (< exponent significand-length)
+                                                 significand
+                                                 (* significand
+                                                    (expt 10 (+ 1 exponent (- significand-length)))))
+                                             stream
+                                             :leading-zeros (if (plusp exponent) 0 1)
                                              :decimal-marker #\.
                                              :decimal-position exponent)
-                      (unless (< exponent significand-length)
-                        (write-char (char *digit-chars* 0) stream))
                       (write-zero-exponent value stream))
                      (t
-                      (quaviver:write-digits client 10 significand stream
+                      (quaviver:write-digits 10
+                                             (if (= significand-length 1)
+                                                 (* 10 significand)
+                                                 significand)
+                                             stream
                                              :decimal-marker #\.
                                              :decimal-position 1)
-                      (when (= significand-length 1)
-                        (write-char #\0 stream))
                       (write-exponent-marker value stream)
                       (print-integer client (1- exponent) 10 nil stream)))))))))
