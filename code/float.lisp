@@ -95,8 +95,8 @@
                                                     (expt 10 (+ 1 exponent (- significand-length)))))
                                              stream
                                              :leading-zeros (if (plusp exponent) 0 1)
-                                             :decimal-marker #\.
-                                             :decimal-position exponent)
+                                             :fractional-marker #\.
+                                             :fractiona-position exponent)
                       (write-zero-exponent value stream))
                      (t
                       (quaviver:write-digits 10
@@ -104,7 +104,7 @@
                                                  (* 10 significand)
                                                  significand)
                                              stream
-                                             :decimal-marker #\.
-                                             :decimal-position 1)
+                                             :fractional-marker #\.
+                                             :fractional-position 1)
                       (write-exponent-marker value stream)
                       (print-integer client (1- exponent) 10 nil stream)))))))))
