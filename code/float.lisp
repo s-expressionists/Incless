@@ -96,7 +96,7 @@
                                              stream
                                              :leading-zeros (if (plusp exponent) 0 1)
                                              :fractional-marker #\.
-                                             :fractiona-position exponent)
+                                             :fractional-position exponent)
                       (write-zero-exponent value stream))
                      (t
                       (quaviver:write-digits 10
