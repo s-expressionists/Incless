@@ -22,7 +22,7 @@
 (defun print-float (client value stream)
   (unless (circle-detection-p client stream)
     (multiple-value-bind (significand exponent sign)
-        (quaviver:float-integer client 10 value)
+        (quaviver:float-triple client 10 value)
       (cond ((keywordp exponent)
              (write-read-eval client value stream
                               (ecase exponent
