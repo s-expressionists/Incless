@@ -107,4 +107,7 @@
                                              :fractional-marker #\.
                                              :fractional-position 1)
                       (write-exponent-marker value stream)
-                      (print-integer client (1- exponent) 10 nil stream)))))))))
+                      (decf exponent)
+                      (when (minusp exponent)
+                        (write-char #\- stream))
+                      (quaviver:write-digits 10 (abs exponent) stream)))))))))
