@@ -21,7 +21,7 @@
 ;;; really possible to test the printer without testing the
 ;;; pretty printer at the same time so we might as well test
 ;;; format at the same time.
-(defsystem "incless-extrinsic/test"
+(asdf:defsystem "incless-extrinsic/test"
   :description "ANSI Test system for Incless"
   :license "BSD"
   :author ("Tarn W. Burton"

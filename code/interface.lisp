@@ -1,12 +1,6 @@
 (in-package #:incless)
 
-(declaim (inline coerce-output-stream-designator
-                 ensure-symbol))
-
-(defun ensure-symbol (name &optional (package *package*))
-  (intern (string name) package))
-
-(defvar *client* nil)
+(declaim (inline coerce-output-stream-designator))
 
 (defgeneric write-object (client object stream))
 
@@ -70,28 +64,53 @@
               (system::dsd-name slot))
             (mop:class-slots class))))
 
-(defgeneric printer-readtable (client)
-  (:method (client)
-    (declare (ignore client))
-    (if *print-readably*
-        #+sbcl sb-impl::*standard-readtable*
-        #-sbcl (with-standard-io-syntax *readtable*)
-        *readtable*)))
+(trinsic:make-define-interface (:client-form client-form :client-class client-class)
+    ((print-object-sym cl:print-object)
+     (write-sym cl:write)
+     (write-to-string-sym cl:write-to-string)
+     (prin1-sym cl:prin1)
+     (princ-sym cl:princ)
+     (print-sym cl:print)
+     (pprint-sym cl:pprint)
+     (prin1-to-string-sym cl:prin1-to-string)
+     (princ-to-string-sym cl:princ-to-string)
+     (print-unreadable-object-sym cl:print-unreadable-object))
+  `((defgeneric ,print-object-sym (object stream)
+      (:method (object stream)
+        (write-unreadable-object ,client-form object stream t t nil)
+        object)
+      (:method ((object array) stream)
+        (print-array ,client-form object stream))
+      (:method ((object bit-vector) stream)
+        (print-bit-vector ,client-form object stream))
+      (:method ((object character) stream)
+        (print-character ,client-form object stream))
+      (:method ((object complex) stream)
+        (print-complex ,client-form object stream))
+      (:method ((object cons) stream)
+        (print-cons ,client-form object stream))
+      (:method ((object integer) stream)
+        (print-integer ,client-form object *print-base* *print-radix* stream))
+      (:method ((object float) stream)
+        (print-float ,client-form object stream))
+      (:method ((object pathname) stream)
+        (print-pathname ,client-form object stream))
+      (:method ((object random-state) stream)
+        (print-random-state ,client-form object stream))
+      (:method ((object rational) stream)
+        (print-rational ,client-form object stream))
+      (:method ((object string) stream)
+        (print-string ,client-form object stream))
+      (:method ((object structure-object) stream)
+        (print-structure ,client-form object stream))
+      (:method ((object symbol) stream)
+        (print-symbol ,client-form object stream))
+      (:method ((object vector) stream)
+        (print-vector ,client-form object stream)))
 
-(defgeneric client-form (client))
-
-(defmacro define-interface (client-var client-class &optional intrinsic)
-  (let* ((pkg (if intrinsic (find-package "COMMON-LISP") *package*))
-         (print-object-name (ensure-symbol '#:print-object pkg)))
-    `(progn
-       (defmethod client-form ((client ,client-class))
-         ',client-var)
-
-       (defgeneric ,print-object-name (object stream))
-
-       (defun ,(ensure-symbol '#:write pkg)
-           (object
-            &key (stream *standard-output*)
+    (defun ,write-sym
+        (object
+         &key (stream *standard-output*)
               ((:array *print-array*) *print-array*)
               ((:base *print-base*) *print-base*)
               ((:case *print-case*) *print-case*)
@@ -107,12 +126,12 @@
               ((:radix *print-radix*) *print-radix*)
               ((:readably *print-readably*) *print-readably*)
               ((:right-margin *print-right-margin*) *print-right-margin*))
-         (write-object ,client-var object stream)
-         object)
+      (write-object ,client-form object stream)
+      object)
 
-       (defun ,(ensure-symbol '#:write-to-string pkg)
-           (object
-            &key ((:array *print-array*) *print-array*)
+    (defun ,write-to-string-sym
+        (object
+         &key ((:array *print-array*) *print-array*)
               ((:base *print-base*) *print-base*)
               ((:case *print-case*) *print-case*)
               ((:circle *print-circle*) *print-circle*)
@@ -127,101 +146,55 @@
               ((:radix *print-radix*) *print-radix*)
               ((:readably *print-readably*) *print-readably*)
               ((:right-margin *print-right-margin*) *print-right-margin*))
-         (with-output-to-string (stream)
-           (write-object ,client-var object stream)))
+      (with-output-to-string (stream)
+        (write-object ,client-form object stream)))
 
-       (defun ,(ensure-symbol '#:prin1 pkg) (object &optional (stream *standard-output*)
-                                     &aux (*print-escape* t))
-         (write-object ,client-var object stream)
-         object)
+    (defun ,prin1-sym (object &optional (stream *standard-output*)
+                       &aux (*print-escape* t))
+      (write-object ,client-form object stream)
+      object)
 
-       (defun ,(ensure-symbol '#:princ pkg) (object &optional (stream *standard-output*)
-                                     &aux (*print-escape* nil)
-                                       (*print-readably* nil))
-         (write-object ,client-var object stream)
-         object)
+    (defun ,princ-sym (object &optional (stream *standard-output*)
+                       &aux (*print-escape* nil)
+                            (*print-readably* nil))
+      (write-object ,client-form object stream)
+      object)
 
-       (defun ,(ensure-symbol '#:print pkg) (object &optional (stream *standard-output*)
-                                     &aux (*print-escape* t))
-         (write-char #\Newline stream)
-         (write-object ,client-var object stream)
-         (write-char #\Space stream)
-         object)
+    (defun ,print-sym (object &optional (stream *standard-output*)
+                       &aux (*print-escape* t))
+      (write-char #\Newline stream)
+      (write-object ,client-form object stream)
+      (write-char #\Space stream)
+      object)
 
-       (defun ,(ensure-symbol '#:pprint pkg) (object &optional (stream *standard-output*)
-                                      &aux (*print-escape* t)
-                                        (*print-pretty* t))
-         (write-char #\Newline stream)
-         (write-object ,client-var object stream)
-         (values))
+    (defun ,pprint-sym (object &optional (stream *standard-output*)
+                        &aux (*print-escape* t)
+                             (*print-pretty* t))
+      (write-char #\Newline stream)
+      (write-object ,client-form object stream)
+      (values))
 
-       (defun ,(ensure-symbol '#:prin1-to-string pkg) (object
-                                               &aux (*print-escape* t))
-         (with-output-to-string (stream)
-           (write-object ,client-var object stream)))
+    (defun ,prin1-to-string-sym (object
+                                 &aux (*print-escape* t))
+      (with-output-to-string (stream)
+        (write-object ,client-form object stream)))
 
-       (defun ,(ensure-symbol '#:princ-to-string pkg) (object
-                                               &aux (*print-escape* nil)
-                                                 (*print-readably* nil))
-         (with-output-to-string (stream)
-           (write-object ,client-var object stream)))
+    (defun ,princ-to-string-sym (object
+                                 &aux (*print-escape* nil)
+                                      (*print-readably* nil))
+      (with-output-to-string (stream)
+        (write-object ,client-form object stream)))
 
-       (defmacro ,(ensure-symbol '#:print-unreadable-object pkg)
-           ((object stream &key type identity) &body body)
-         (list 'write-unreadable-object
-               ,client-var object stream type identity
-               (list* 'lambda '() body)))
+    (defmacro ,print-unreadable-object-sym
+        ((object stream &key type identity) &body body)
+      (list 'write-unreadable-object
+            ,client-form object stream type identity
+            (list* 'lambda '() body)))
 
-       (defmethod print-object ((client ,client-class) object stream)
-         (declare (ignore client))
-         (,print-object-name object stream))
+    (defmethod print-object ((client ,client-class) object stream)
+      (declare (ignore client))
+      (,print-object-sym object stream))
 
-       (defmethod write-object ((client ,client-class) object stream)
-         (handle-circle client object stream #',print-object-name)
-         object)
-
-       (defmethod ,print-object-name (object stream)
-         (write-unreadable-object ,client-var object stream t t nil)
-         object)
-
-       (defmethod ,print-object-name ((object array) stream)
-         (print-array ,client-var object stream))
-
-       (defmethod ,print-object-name ((object bit-vector) stream)
-         (print-bit-vector ,client-var object stream))
-
-       (defmethod ,print-object-name ((object character) stream)
-         (print-character ,client-var object stream))
-
-       (defmethod ,print-object-name ((object complex) stream)
-         (print-complex ,client-var object stream))
-
-       (defmethod ,print-object-name ((object cons) stream)
-         (print-cons ,client-var object stream))
-
-       (defmethod ,print-object-name ((object integer) stream)
-         (print-integer ,client-var object *print-base* *print-radix* stream))
-
-       (defmethod ,print-object-name ((object float) stream)
-         (print-float ,client-var object stream))
-
-       (defmethod ,print-object-name ((object pathname) stream)
-         (print-pathname ,client-var object stream))
-
-       (defmethod ,print-object-name ((object random-state) stream)
-         (print-random-state ,client-var object stream))
-
-       (defmethod ,print-object-name ((object rational) stream)
-         (print-rational ,client-var object stream))
-
-       (defmethod ,print-object-name ((object string) stream)
-         (print-string ,client-var object stream))
-
-       (defmethod ,print-object-name ((object structure-object) stream)
-         (print-structure ,client-var object stream))
-
-       (defmethod ,print-object-name ((object symbol) stream)
-         (print-symbol ,client-var object stream))
-
-       (defmethod ,print-object-name ((object vector) stream)
-         (print-vector ,client-var object stream)))))
+    (defmethod write-object ((client ,client-class) object stream)
+      (handle-circle client object stream #',print-object-sym)
+      object)))

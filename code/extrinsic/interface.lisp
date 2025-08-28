@@ -8,4 +8,4 @@
 
 (defvar *client* (make-instance 'extrinsic-client-impl))
 
-(incless:define-interface *client* extrinsic-client)
+(incless:define-interface :client-form *client* :client-class extrinsic-client)

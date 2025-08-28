@@ -8,7 +8,6 @@
            #:circle-check
            #:circle-detection-p
            #:class-slot-names
-           #:client-form
            #:define-interface
            #:handle-circle
            #:print-array
@@ -26,7 +25,6 @@
            #:print-structure
            #:print-symbol
            #:print-vector
-           #:printer-readtable
            #:write-identity
            #:write-object
            #:write-unreadable-object))

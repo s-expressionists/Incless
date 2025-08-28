@@ -1,5 +1,12 @@
 (cl:in-package #:incless)
 
+(defun print-readtable-case (client)
+  (readtable-case (if *print-readably*
+                      #+clasp eclector.reader::*standard-readtable*
+                      #+sbcl sb-impl::*standard-readtable*
+                      #-(or clasp sbcl) (with-standard-io-syntax *readtable*)
+                      *readtable*)))
+
 (defun print-lowercase-symbol (client name stream)
   (declare (ignore client))
   (loop for char across name
@@ -12,7 +19,7 @@
 
 (defun print-capitalized-symbol (client name stream)
   (loop with prev-not-alphanum = t
-        with up = (eq (readtable-case (printer-readtable client)) :upcase)
+        with up = (eq (print-readtable-case client) :upcase)
         for char across name
         do (write-char (if up
                            (if (or prev-not-alphanum (lower-case-p char))
@@ -40,7 +47,7 @@
           do (setf all-lower nil)))
 
 (defun print-cased-symbol (client name stream)
-  (ecase (readtable-case (printer-readtable client))
+  (ecase (print-readtable-case client)
     (:upcase
      (ecase *print-case*
        (:upcase (write-string name stream))
@@ -76,7 +83,7 @@
   "./^_eEsSfFdDlL")
 
 (defun quote-symbol-p (client name)
-  (loop with case = (readtable-case (printer-readtable client))
+  (loop with case = (print-readtable-case client)
         with number-p = t
         with one-digit = nil
         with all-dots = t

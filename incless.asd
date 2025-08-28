@@ -10,7 +10,8 @@
   :version (:read-file-form "version.sexp")
   :homepage "https://github.com/s-expressionists/Incless"
   :bug-tracker "https://github.com/s-expressionists/Incless/issues"
-  :depends-on ("quaviver")
+  :depends-on ("quaviver"
+               "trinsic")
   :components ((:module "code"
                 :serial t
                 :components ((:file "package")
