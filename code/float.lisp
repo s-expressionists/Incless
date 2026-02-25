@@ -17,7 +17,7 @@
 (defun write-zero-exponent (value stream)
   (unless (typep value *read-default-float-format*)
     (write-exponent-marker value stream)
-    (write-char (char *digit-chars* 0) stream)))
+    (write-char #\0 stream)))
 
 (defun print-float (client value stream)
   (unless (circle-detection-p client stream)

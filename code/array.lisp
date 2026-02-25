@@ -41,7 +41,7 @@
                (and (not *print-readably*)
                     *print-array*))
            (write-char #\# stream)
-           (write-integer-digits (array-rank arr) 10 stream)
+           (quaviver:write-digits 10 (array-rank arr) stream)
            (write-char #\A stream)
            (print-guts '() (array-dimensions arr) *print-level*))
           #+(or clasp clisp cmucl ecl mkcl)

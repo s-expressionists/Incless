@@ -3,9 +3,7 @@
 (defpackage #:incless
   (:shadow #:print-object)
   (:use #:common-lisp)
-  (:export #:*digit-chars*
-           #:burger-dybvig-2
-           #:circle-check
+  (:export #:circle-check
            #:circle-detection-p
            #:class-slot-names
            #:define-interface
