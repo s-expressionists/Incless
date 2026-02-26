@@ -15,10 +15,6 @@
      (quaviver:write-digits 10 *print-base* stream)
      (write-char #\r stream))))
 
-(defun write-sign (integer stream)
-  (when (minusp integer)
-    (write-char #\- stream)))
-
 (defun print-integer (client integer base radix stream)
   ;; Determine whether a radix prefix should be printed, and if so,
   ;; which one.
