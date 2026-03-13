@@ -1,5 +1,5 @@
-(asdf:defsystem "incless-extension-intrinsic"
-  :description "A portable and extensible Common Lisp printer implementation (intrinsic interface)"
+(asdf:defsystem "incless"
+  :description "A portable and extensible Common Lisp printer implementation (core)"
   :license "BSD"
   :author ("Tarn W. Burton"
            "Robert Strandh"
@@ -8,10 +8,9 @@
   :version (:read-file-form "version.sexp")
   :homepage "https://github.com/s-expressionists/Incless"
   :bug-tracker "https://github.com/s-expressionists/Incless/issues"
-  :depends-on ("incless"
-               "quaviver/schubfach")
+  :depends-on ("incless")
   :components ((:module "code"
-                :pathname "code/extension-intrinsic/"
+                :pathname "code/extension/"
                 :serial t
                 :components ((:file "packages")
-                             (:file "interface")))))
+                             (:file "implementation")))))

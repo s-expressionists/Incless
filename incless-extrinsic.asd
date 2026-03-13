@@ -14,7 +14,7 @@
   :components ((:module "code"
                 :pathname "code/extrinsic/"
                 :serial t
-                :components ((:file "package")
+                :components ((:file "packages")
                              (:file "interface")))))
 
 ;;; This is really a test of the whole printer suite. It's not

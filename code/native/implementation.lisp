@@ -1,8 +1,8 @@
 (in-package #:incless-native)
 
-(defclass native-client () ())
+(defclass client (incless:client) ())
 
-(defmethod incless:write-object ((client native-client) object stream)
+(defmethod incless:write-object ((client client) object stream)
   (declare (ignorable client))
   #+abcl (system:output-object object stream)
   #+(or clasp ecl) (sys:write-object object stream)
@@ -10,10 +10,10 @@
   #+cmucl (kernel:output-object object stream)
   #+sbcl (sb-impl::output-object object stream))
 
-(defmethod incless:print-object ((client native-client) object stream)
+(defmethod incless:print-object ((client client) object stream)
   (print-object object stream))
 
-(defmethod incless:handle-circle ((client native-client) object stream function)
+(defmethod incless:handle-circle ((client client) object stream function)
   (declare (ignorable client))
   #+abcl (if (and *print-circle* (null sys::*circularity-hash-table*))
              (let ((sys::*circularity-hash-table* (make-hash-table :test 'eq)))
@@ -49,12 +49,12 @@
   #-(or abcl clasp cmucl ecl) (funcall function object stream))
 
 (defmethod incless:write-unreadable-object
-    ((client native-client) object stream type identity function)
+    ((client client) object stream type identity function)
   (declare (ignore client))
   (print-unreadable-object (object stream :type type :identity identity)
     (funcall function)))
 
-(defmethod incless:circle-check ((client native-client) object stream)
+(defmethod incless:circle-check ((client client) object stream)
   (declare (ignore client stream))
   #+abcl (and (system::check-for-circularity object) t)
   #+clasp (and *print-circle* object core::*circle-counter*

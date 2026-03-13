@@ -1,6 +1,6 @@
 ;;;; package.lisp
 
-(defpackage #:incless-extrinsic
+(defpackage #:incless-extension-extrinsic
   (:use #:cl)
   (:shadow #:pprint
            #:prin1
@@ -13,7 +13,7 @@
            #:write
            #:write-to-string)
   (:export #:*client*
-           #:extrinsic-client
+           #:client
            #:pprint
            #:prin1
            #:prin1-to-string

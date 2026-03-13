@@ -13,7 +13,7 @@
            (symbol-package x)
            t)))
 
-(defmethod handle-circle (client object stream function)
+(defmethod handle-circle ((client client) object stream function)
   (if (or (not *print-circle*)
           (uniquely-identified-by-print-p object))
       (funcall function object stream)
@@ -50,8 +50,8 @@
               (t
                (walk stream))))))
 
-(defmethod circle-check (client object stream)
-  (declare (ignore client stream))
+(defmethod circle-check ((client client) object stream)
+  (declare (ignore stream))
   (cond (*circularity-counter*
          (and *print-circle*
               *circularity-hash-table*
@@ -66,13 +66,13 @@
         (t
          nil)))
 
-(defmethod circle-detection-p (client stream)
-  (declare (ignore client stream))
+(defmethod circle-detection-p ((client client) stream)
+  (declare (ignore stream))
   (and *circularity-hash-table*
        (not *circularity-counter*)))
 
 (defmethod write-unreadable-object
-    (client object stream type identity function)
+    ((client client) object stream type identity function)
   (cond (*print-readably*
          (error 'print-not-readable :object object))
         (t

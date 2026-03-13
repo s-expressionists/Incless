@@ -12,6 +12,6 @@
   :components ((:module "code"
                 :pathname "code/native/"
                 :serial t
-                :components ((:file "package")
+                :components ((:file "packages")
                              (:file "implementation")))))
 

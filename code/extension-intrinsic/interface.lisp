@@ -1,11 +1,9 @@
 (in-package #:incless-extension-intrinsic)
 
-(defclass intrinsic-client () ())
+(defclass client (incless-extension:client) ())
 
-(defclass intrinsic-client-impl
-    (intrinsic-client quaviver/schubfach:client)
-  ())
+(defclass client-impl (client quaviver/schubfach:client) ())
 
-(defvar *client* (make-instance 'intrinsic-client-impl))
+(defvar *client* (make-instance 'client-impl))
 
-(incless:define-interface *client* intrinsic-client t)
+(incless:define-interface *client* client t)

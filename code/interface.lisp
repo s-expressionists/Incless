@@ -64,6 +64,8 @@
               (system::dsd-name slot))
             (mop:class-slots class))))
 
+(defclass client () ())
+
 (trinsic:make-define-interface (:client-form client-form :client-class client-class)
     ((print-object-sym cl:print-object)
      (write-sym cl:write)

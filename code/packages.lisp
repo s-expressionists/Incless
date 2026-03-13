@@ -6,6 +6,7 @@
   (:export #:circle-check
            #:circle-detection-p
            #:class-slot-names
+           #:client
            #:define-interface
            #:handle-circle
            #:print-array

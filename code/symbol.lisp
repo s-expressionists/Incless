@@ -1,6 +1,7 @@
 (cl:in-package #:incless)
 
 (defun print-readtable-case (client)
+  (declare (ignore client))
   (readtable-case (if *print-readably*
                       #+clasp eclector.reader::*standard-readtable*
                       #+sbcl sb-impl::*standard-readtable*

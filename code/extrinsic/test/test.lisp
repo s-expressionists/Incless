@@ -1,6 +1,6 @@
 (in-package #:incless-extrinsic/test)
 
-(defclass extrinsic-test-client (invistra-extrinsic::extrinsic-client-impl) ())
+(defclass client (invistra-extrinsic::client-impl) ())
 
 (defvar *tests*
   '("COPY-PPRINT-DISPATCH."
@@ -67,7 +67,7 @@
     invistra-extrinsic:format
     invistra-extrinsic:formatter))
 
-(defmethod invistra:coerce-function-designator ((client extrinsic-test-client) object)
+(defmethod invistra:coerce-function-designator ((client client) object)
   (or (find object *extrinsic-symbols*
             :test (lambda (x y)
                     (equal (string x) (string y))))
@@ -75,7 +75,7 @@
 
 (defun test (&rest args)
   (let ((system (asdf:find-system :incless-extrinsic/test))
-        (incless-extrinsic:*client* (make-instance 'extrinsic-test-client)))
+        (incless-extrinsic:*client* (make-instance 'client)))
     (apply #'ansi-test-harness:ansi-test
            :directory (merge-pathnames (make-pathname :directory '(:relative "dependencies" "ansi-test"))
                                        (asdf:component-pathname system))

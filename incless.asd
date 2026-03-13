@@ -14,7 +14,7 @@
                "trinsic")
   :components ((:module "code"
                 :serial t
-                :components ((:file "package")
+                :components ((:file "packages")
                              (:file "interface")
                              (:file "write-object")
                              (:file "integer")

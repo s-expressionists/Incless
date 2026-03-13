@@ -13,5 +13,5 @@
   :components ((:module "code"
                 :pathname "code/extension-extrinsic/"
                 :serial t
-                :components ((:file "package")
+                :components ((:file "packages")
                              (:file "interface")))))
