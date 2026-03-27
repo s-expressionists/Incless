@@ -29,6 +29,9 @@
                                 (:infinity
                                  (if (minusp sign)
                                      (etypecase value
+                                       #+(and (or clasp ecl) short-float)
+                                       (short-float
+                                        'ext:short-float-negative-infinity)
                                        (single-float
                                         #+(or abcl clasp cmucl ecl)
                                         'ext:single-float-negative-infinity
@@ -39,10 +42,13 @@
                                         'ext:double-float-negative-infinity
                                         #+sbcl
                                         'sb-ext:double-float-negative-infinity)
-                                       #+(and ecl long-float)
+                                       #+(and (or clasp ecl) long-float)
                                        (long-float
                                         'ext:long-float-negative-infinity))
                                      (etypecase value
+                                       #+(and (or clasp ecl) short-float)
+                                       (short-float
+                                        'ext:short-float-positive-infinity)
                                        (single-float
                                         #+(or abcl clasp cmucl ecl)
                                         'ext:single-float-positive-infinity
@@ -53,7 +59,7 @@
                                         'ext:double-float-positive-infinity
                                         #+sbcl
                                         'sb-ext:double-float-positive-infinity)
-                                       #+(and ecl long-float)
+                                       #+(and (or ecl clasp) long-float)
                                        (long-float
                                         'ext:long-float-positive-infinity))))
                                 ((:quiet-nan :signaling-nan)
