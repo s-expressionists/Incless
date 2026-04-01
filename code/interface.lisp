@@ -87,6 +87,9 @@
               (system::dsd-name slot))
             (mop:class-slots class))))
 
+(defmethod trinsic:features-list nconc ((client client))
+  (list :print/incless))
+
 (trinsic:make-define-interface (:client-form client-form :client-class client-class)
     ((print-object-sym cl:print-object)
      (write-sym cl:write)
