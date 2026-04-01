@@ -24,6 +24,8 @@
            #:print-structure
            #:print-symbol
            #:print-vector
+           #:printing-char-p
+           #:whitespace-char-p
            #:write-identity
            #:write-object
            #:write-unreadable-object))

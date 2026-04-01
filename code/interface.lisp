@@ -1,6 +1,29 @@
 (in-package #:incless)
 
+(defclass client () ())
+
 (declaim (inline coerce-output-stream-designator))
+
+(defgeneric whitespace-char-p (client ch)
+  (:method ((client client) ch)
+    #+ccl (ccl::whitespacep ch)
+    #+clasp
+    (eq (core:syntax-type *readtable* ch) :whitespace)
+    #+cmucl (lisp::whitespacep ch)
+    #+(and ecl (not bytecode))
+    (ffi::c-inline (ch) (t) :bool
+                   "ecl_readtable_get(ecl_current_readtable(), ECL_CHAR_CODE(#0), NULL) == cat_whitespace"
+                            :one-liner t)
+    #+sicl (eq (eclector.readtable:syntax-type *readtable* ch) :whitespace)
+    #+sbcl (sb-impl::whitespace[2]p ch *readtable*)
+    #-(or ccl clasp cmucl (and ecl (not bytecode)) sbcl)
+    (and (member ch '(#\tab #\newline #\linefeed #\page #\return #\space))
+         t)))
+
+(defgeneric printing-char-p (client ch)
+  (:method (client ch)
+    (declare (ignore client))
+    (and (graphic-char-p ch) (not (eql ch #\space)))))
 
 (defgeneric write-object (client object stream))
 
@@ -63,8 +86,6 @@
     (mapcar (lambda (slot)
               (system::dsd-name slot))
             (mop:class-slots class))))
-
-(defclass client () ())
 
 (trinsic:make-define-interface (:client-form client-form :client-class client-class)
     ((print-object-sym cl:print-object)

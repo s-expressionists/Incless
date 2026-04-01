@@ -3,7 +3,8 @@
 (defun print-readtable-case (client)
   (declare (ignore client))
   (readtable-case (if *print-readably*
-                      #+clasp eclector.reader::*standard-readtable*
+                      #+clasp (or eclector.reader::*standard-readtable*
+                                  (with-standard-io-syntax *readtable*))
                       #+sbcl sb-impl::*standard-readtable*
                       #-(or clasp sbcl) (with-standard-io-syntax *readtable*)
                       *readtable*)))
@@ -72,7 +73,7 @@
         do (write-char char stream)))
 
 (defvar +quoted-characters+
-  (vector (code-char 0) #\Space #\( #\) #\, #\| #\\ #\` #\' #\" #\; #\: #\Newline))
+  (vector (code-char 0) #\( #\) #\, #\| #\\ #\` #\' #\" #\; #\:))
 
 (defvar +initial-number-characters+
   ".+-/^_")
@@ -83,6 +84,13 @@
 (defvar +final-number-characters+
   "./^_eEsSfFdDlL")
 
+(defun macro-character-p (char)
+  (multiple-value-bind (function non-terminating-p)
+      (get-macro-character char)
+    (cond ((not function) nil)
+          (non-terminating-p :non-terminating)
+          (t :terminating))))
+
 (defun quote-symbol-p (client name)
   (loop with case = (print-readtable-case client)
         with number-p = t
@@ -91,13 +99,17 @@
         for char across name
         for index from 0
         for b downfrom (1- (length name))
+        for macro-char-p = (macro-character-p char)
         for digit-char-p = (digit-char-p char *print-base*)
         finally (return (or all-dots
                             (and one-digit number-p)))
         when (or (find char +quoted-characters+)
+                 (whitespace-char-p client char)
                  (and (upper-case-p char)
                       (eq case :downcase))
-                 (and (lower-case-p char)))
+                 (and (lower-case-p char))
+                 (and (zerop index) macro-char-p)
+                 (eq macro-char-p :terminating))
           return t
         when (char/= char #\.)
           do (setf all-dots nil)
