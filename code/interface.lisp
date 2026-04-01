@@ -54,7 +54,10 @@
 
 (defgeneric circle-check (client object stream))
 
-(defgeneric circle-detection-p (client stream))
+(defgeneric circle-detection-p (client stream)
+  (:method (client stream)
+    (declare (ignore client stream))
+    nil))
 
 (defgeneric class-slot-names (client class)
   (:method (client class)

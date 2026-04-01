@@ -6,4 +6,4 @@
 
 (defvar *client* (make-instance 'client-impl))
 
-(incless:define-interface *client* client t)
+(incless:define-interface :client-form *client* :client-class client :intrinsic t)
