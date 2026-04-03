@@ -3,8 +3,7 @@
 (defun print-readtable-case (client)
   (declare (ignore client))
   (readtable-case (if *print-readably*
-                      #+clasp (or eclector.reader::*standard-readtable*
-                                  (with-standard-io-syntax *readtable*))
+                      #+clasp core::+standard-readtable+
                       #+sbcl sb-impl::*standard-readtable*
                       #-(or clasp sbcl) (with-standard-io-syntax *readtable*)
                       *readtable*)))
