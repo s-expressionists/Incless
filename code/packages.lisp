@@ -17,6 +17,7 @@
            #:print-float
            #:print-integer
            #:print-object
+           #:print-package
            #:print-pathname
            #:print-random-state
            #:print-rational

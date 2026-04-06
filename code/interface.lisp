@@ -132,6 +132,8 @@
         (print-string ,client-form object stream))
       (:method ((object structure-object) stream)
         (print-structure ,client-form object stream))
+      (:method ((object package) stream)
+        (print-package ,client-form object stream))
       (:method ((object symbol) stream)
         (print-symbol ,client-form object stream))
       (:method ((object vector) stream)

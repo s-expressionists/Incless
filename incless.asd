@@ -31,4 +31,5 @@
                              (:file "pathname")
                              (:file "standard-object")
                              (:file "structure")
+                             (:file "package")
                              (:file "symbol")))))
