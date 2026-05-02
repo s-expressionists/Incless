@@ -3,7 +3,7 @@
 (defun print-readtable-case (client)
   (declare (ignore client))
   (readtable-case (if *print-readably*
-                      #+clasp core::+standard-readtable+
+                      #+clasp (symbol-value 'core::+standard-readtable+)
                       #+sbcl sb-impl::*standard-readtable*
                       #-(or clasp sbcl) (with-standard-io-syntax *readtable*)
                       *readtable*)))
@@ -86,7 +86,9 @@
 (defun macro-character-p (char)
   (multiple-value-bind (function non-terminating-p)
       (get-macro-character char)
-    (cond ((not function) nil)
+    (cond ((or (not function)
+               #+cmucl (eq function #'lisp::read-token))
+           nil)
           (non-terminating-p :non-terminating)
           (t :terminating))))
 
